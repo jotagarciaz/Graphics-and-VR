@@ -3,6 +3,9 @@ import pyglet
 from pyglet.gl import *
 from pyglet.window import key
 import math
+from pyglet_gui.theme import Theme
+from pyglet_gui.buttons import Button
+from pyglet_gui.manager import Manager
 
 class Window():
     """Initialize the class window, with an array to save points, a default point size of 25, and a window"""
@@ -16,6 +19,11 @@ class Window():
         self.click_counter = 0
         self.L = []
 
+    def get_window(self):
+        return self.window
+
+    def get_batch(self):
+        return self.batch
     #First line drawer algorithm, slope intercept
     def slope_intercept(self, x1, y1, x2, y2):
         self.L.clear()
@@ -133,7 +141,7 @@ class Window():
                 self.click_counter += 1
                 self.L.append([x, y]) 
                 if self.click_counter == 2:
-                    self.bresenham_line_algorithm(self.L[0][0],self.L[0][1],self.L[1][0],self.L[1][1])
+                    self.slope_intercept(self.L[0][0],self.L[0][1],self.L[1][0],self.L[1][1])
                     print(self.L)
                     self.click_counter=0
                     self.L.clear()
@@ -142,5 +150,46 @@ class Window():
 window1=Window(300, 300)
 window1.point_size(18)
 window1.action_mouse()
+
+
+theme = Theme({"font": "Lucida Grande",
+               "font_size": 12,
+               "text_color": [0, 0, 0, 255],
+               "gui_color": [255, 255, 255, 255],
+               "button": {
+                   "down": {
+                       "image": {
+                           "source": "down.png",
+                           "frame": [8, 6, 2, 2],
+                           "padding": [18, 18, 8, 6]
+                       },
+                       "text_color": [220, 220, 220, 255]
+                   },
+                   "up": {
+                       "image": {
+                           "source": "up.png",
+                           "frame": [6, 5, 6, 3],
+                           "padding": [18, 18, 8, 6]
+                       },
+                       "text_color": [0, 0, 0, 255]
+                   }
+               }
+              }, resources_path='theme/')
+
+
+# just to print something to the console, is optional.
+def callback(is_pressed):
+    print('Button was pressed to state', is_pressed)
+
+
+
+button = Button('Line', on_press=callback)
+batch = window1.get_batch()
+
+windows=window1.get_window()
+
+
+
+Manager(button, window=windows, theme=theme,batch=batch)
 
 pyglet.app.run()
