@@ -148,6 +148,7 @@ class Canvas(arcade.Window):
         # Create your sprites and sprite lists here
         self.myButtons=[]
         self.L=[]
+        self.L_aux=[]
         self.myButtons.append(TextButton(60, 570, 100, 40, "Slope", 14,"Arial"))
         self.myButtons.append(TextButton(60, 510, 100, 40, "D.D.A.", 14,"Arial"))
         self.myButtons.append(TextButton(60,450,100,40,"Bresenham",14))
@@ -177,6 +178,7 @@ class Canvas(arcade.Window):
         """
         for point in self.L:
             arcade.draw_point(point[0],point[1], arcade.color.ZAFFRE, 10)
+        
 
     def on_key_press(self, key, key_modifiers):
         """
@@ -192,12 +194,32 @@ class Canvas(arcade.Window):
         Called whenever the user lets off a previously pressed key.
         """
         pass
-
+    
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         """
         Called whenever the mouse moves.
+        
+        Con self.L_aux len 1 puedes hacer que el segundo punto sea el de esta x e y
         """
         pass
+    
+    # Second Line drawer algorithm
+    def digital_differential_analyzer(self, x1, y1, x2, y2):
+        self.L.clear()
+        dx = x2-x1 
+        dy = y2-y1 
+        M=max(abs(dx),abs(dy))
+        dx_=dx/M
+        dy_=dy/M
+        x=x1+0.5
+        y=y1+0.5
+        
+        for _ in range(0,M+1):
+            self.L.append([x,y])
+            x=x+dx_
+            y=y+dy_
+        print(self.L)
+        
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         """
@@ -208,13 +230,15 @@ class Canvas(arcade.Window):
         if check_buttons_click_area(x, y, self.myButtons) == False:     
             for button in self.myButtons:
                 if button.pressed:
-                    self.L.append([x,y])
-                    if button.text == 'Slope':
-                        print("Slope")       
-                    elif button.text == 'D.D.A.':
-                        print("D.D.A.")
-                    elif button.text == 'Bresenham':
-                        print ("Bresenham")
+                    self.L_aux.append([x,y])
+                    if len(self.L_aux) == 2:
+                        if button.text == 'Slope':
+                            print("Slope")       
+                        elif button.text == 'D.D.A.':
+                            self.digital_differential_analyzer(self.L_aux[0][0],self.L_aux[0][1],self.L_aux[1][0],self.L_aux[1][1])
+                        elif button.text == 'Bresenham':
+                            print ("Bresenham")
+                        self.L_aux.clear()
 
     def on_mouse_release(self, x, y, button, key_modifiers):
         """
@@ -222,6 +246,7 @@ class Canvas(arcade.Window):
         """
         check_mouse_release_for_buttons(x, y, self.myButtons)
 
+    
 
 def main():
     """ Main method """
