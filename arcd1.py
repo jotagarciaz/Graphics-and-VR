@@ -8,6 +8,8 @@ If Python and Arcade are installed, this example can be run from the command lin
 python -m arcade.examples.starting_template
 """
 import arcade
+import os
+
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -25,7 +27,7 @@ class TextButton:
                  face_color=arcade.color.LIGHT_GRAY,
                  highlight_color=arcade.color.WHITE,
                  shadow_color=arcade.color.GRAY,
-                 button_height=2):
+                 button_height=1):
         self.center_x = center_x
         self.center_y = center_y
         self.width = width
@@ -94,6 +96,8 @@ class TextButton:
 def check_mouse_press_for_buttons(x, y, button_list):
     """ Given an x, y, see if we need to register any button clicks. """
     for button in button_list:
+        if button.pressed:
+            button.on_release()
         if x > button.center_x + button.width / 2:
             continue
         if x < button.center_x - button.width / 2:
@@ -101,16 +105,15 @@ def check_mouse_press_for_buttons(x, y, button_list):
         if y > button.center_y + button.height / 2:
             continue
         if y < button.center_y - button.height / 2:
-            continue
+            continue  
         button.on_press()
 
 
 def check_mouse_release_for_buttons(x, y, button_list):
     """ If a mouse button has been released, see if we need to process
         any release events. """
-    for button in button_list:
-        if button.pressed:
-            button.on_release()
+    
+            
 
 class Canvas(arcade.Window):
     """
@@ -123,7 +126,7 @@ class Canvas(arcade.Window):
 
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
-        arcade.set_background_color(arcade.color.BABY_BLUE_EYES)
+        arcade.set_background_color(arcade.color.GRAY_ASPARAGUS)
         self.myButtons = None
         # If you have sprite lists, you should create them here,
         # and set them to None
@@ -131,7 +134,9 @@ class Canvas(arcade.Window):
     def setup(self):
         # Create your sprites and sprite lists here
         self.myButtons=[]
-        self.myButtons.append(TextButton(60, 570, 100, 40, "Start", 18,"Arial"))
+        self.myButtons.append(TextButton(60, 570, 100, 40, "Slope", 14,"Arial"))
+        self.myButtons.append(TextButton(60, 510, 100, 40, "D.D.A.", 14,"Arial"))
+        self.myButtons.append(TextButton(60,450,100,40,"Bresenham",14))
 
     def on_draw(self):
         """
@@ -179,7 +184,16 @@ class Canvas(arcade.Window):
         """
         Called when the user presses a mouse button.
         """
+       
         check_mouse_press_for_buttons(x, y, self.myButtons)
+        for button in self.myButtons:
+            if button.pressed:
+                if button.text == 'Slope':
+                    print("Slope")
+                elif button.text == 'D.D.A.':
+                    print("D.D.A.")
+                elif button.text == 'Bresenham':
+                    print ("Bresenham")
 
     def on_mouse_release(self, x, y, button, key_modifiers):
         """
