@@ -87,26 +87,38 @@ class TextButton:
                          width=self.width, align="center",
                          anchor_x="center", anchor_y="center")
 
+    def click_area(self,x,y):
+        
+        if  x < self.center_x + self.width / 2 and x > self.center_x - self.width / 2 and \
+            y < self.center_y + self.height / 2 and y > self.center_y - self.height / 2:
+            
+            return True
+        return False    
+        
+
     def on_press(self):
         self.pressed = True
 
     def on_release(self):
         self.pressed = False
 
+def check_buttons_click_area(x,y,button_list):
+
+    for button in button_list:
+         if button.click_area(x,y):
+            return True
+    return False
+
 def check_mouse_press_for_buttons(x, y, button_list):
     """ Given an x, y, see if we need to register any button clicks. """
     for button in button_list:
-        if button.pressed:
+        if button.click_area(x,y) and not button.pressed:
+            button.on_press()
+        elif button.click_area(x,y) and button.pressed:
             button.on_release()
-        if x > button.center_x + button.width / 2:
-            continue
-        if x < button.center_x - button.width / 2:
-            continue
-        if y > button.center_y + button.height / 2:
-            continue
-        if y < button.center_y - button.height / 2:
-            continue  
-        button.on_press()
+        elif button.pressed and check_buttons_click_area(x,y,button_list):
+            button.on_release()
+
 
 
 def check_mouse_release_for_buttons(x, y, button_list):
@@ -128,12 +140,14 @@ class Canvas(arcade.Window):
         super().__init__(width, height, title)
         arcade.set_background_color(arcade.color.GRAY_ASPARAGUS)
         self.myButtons = None
+        self.L=None
         # If you have sprite lists, you should create them here,
         # and set them to None
 
     def setup(self):
         # Create your sprites and sprite lists here
         self.myButtons=[]
+        self.L=[]
         self.myButtons.append(TextButton(60, 570, 100, 40, "Slope", 14,"Arial"))
         self.myButtons.append(TextButton(60, 510, 100, 40, "D.D.A.", 14,"Arial"))
         self.myButtons.append(TextButton(60,450,100,40,"Bresenham",14))
@@ -149,6 +163,10 @@ class Canvas(arcade.Window):
         arcade.start_render()
         for button in self.myButtons:
             button.draw()
+        for point in self.L:
+            arcade.draw_point(point[0],point[1], arcade.color.ZAFFRE, 10)
+        
+
         # Call draw() on all your sprite lists below
 
     def update(self, delta_time):
@@ -157,7 +175,8 @@ class Canvas(arcade.Window):
         Normally, you'll call update() on the sprite lists that
         need it.
         """
-        pass
+        for point in self.L:
+            arcade.draw_point(point[0],point[1], arcade.color.ZAFFRE, 10)
 
     def on_key_press(self, key, key_modifiers):
         """
@@ -186,14 +205,16 @@ class Canvas(arcade.Window):
         """
        
         check_mouse_press_for_buttons(x, y, self.myButtons)
-        for button in self.myButtons:
-            if button.pressed:
-                if button.text == 'Slope':
-                    print("Slope")
-                elif button.text == 'D.D.A.':
-                    print("D.D.A.")
-                elif button.text == 'Bresenham':
-                    print ("Bresenham")
+        if check_buttons_click_area(x, y, self.myButtons) == False:     
+            for button in self.myButtons:
+                if button.pressed:
+                    self.L.append([x,y])
+                    if button.text == 'Slope':
+                        print("Slope")       
+                    elif button.text == 'D.D.A.':
+                        print("D.D.A.")
+                    elif button.text == 'Bresenham':
+                        print ("Bresenham")
 
     def on_mouse_release(self, x, y, button, key_modifiers):
         """
