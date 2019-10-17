@@ -9,11 +9,12 @@ python -m arcade.examples.starting_template
 """
 import arcade
 import os
-
+import copy
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_TITLE = "Starting Template"
+
 
 class TextButton:
     """ Text-based button """
@@ -27,7 +28,9 @@ class TextButton:
                  face_color=arcade.color.LIGHT_GRAY,
                  highlight_color=arcade.color.WHITE,
                  shadow_color=arcade.color.GRAY,
-                 button_height=1):
+                 button_height=1,
+                 action_function=None
+                 ):
         self.center_x = center_x
         self.center_y = center_y
         self.width = width
@@ -40,6 +43,7 @@ class TextButton:
         self.highlight_color = highlight_color
         self.shadow_color = shadow_color
         self.button_height = button_height
+        self.action_function = action_function
 
     def draw(self):
         """ Draw the button """
@@ -87,14 +91,12 @@ class TextButton:
                          width=self.width, align="center",
                          anchor_x="center", anchor_y="center")
 
-    def click_area(self,x,y):
-        
-        if  x < self.center_x + self.width / 2 and x > self.center_x - self.width / 2 and \
-            y < self.center_y + self.height / 2 and y > self.center_y - self.height / 2:
-            
+    def click_area(self, x, y):
+
+        if x < self.center_x + self.width / 2 and x > self.center_x - self.width / 2 and \
+                y < self.center_y + self.height / 2 and y > self.center_y - self.height / 2:
             return True
-        return False    
-        
+        return False
 
     def on_press(self):
         self.pressed = True
@@ -102,30 +104,49 @@ class TextButton:
     def on_release(self):
         self.pressed = False
 
-def check_buttons_click_area(x,y,button_list):
 
+class LineButton(TextButton):
+    def __init__(self,
+                 center_x, center_y,
+                 width, height,
+                 text,
+                 font_size=18,
+                 font_face="Arial",
+                 face_color=arcade.color.LIGHT_GRAY,
+                 highlight_color=arcade.color.WHITE,
+                 shadow_color=arcade.color.GRAY,
+                 button_height=1,
+                 action_function=None):
+        super().__init__(center_x, center_y, width, height, text, font_size, font_face,
+              face_color, highlight_color, shadow_color, button_height, action_function)
+
+
+def check_buttons_click_area(x, y, button_list):
+    """ Given an x, y, see if we need to register any button clicks. """
     for button in button_list:
-         if button.click_area(x,y):
+        if button.click_area(x, y):
             return True
     return False
+
 
 def check_mouse_press_for_buttons(x, y, button_list):
     """ Given an x, y, see if we need to register any button clicks. """
     for button in button_list:
-        if button.click_area(x,y) and not button.pressed:
+        if button.click_area(x, y) and not button.pressed:
             button.on_press()
-        elif button.click_area(x,y) and button.pressed:
+        elif button.click_area(x, y) and button.pressed:
             button.on_release()
-        elif button.pressed and check_buttons_click_area(x,y,button_list):
+        elif button.pressed and check_buttons_click_area(x, y, button_list):
             button.on_release()
-
 
 
 def check_mouse_release_for_buttons(x, y, button_list):
     """ If a mouse button has been released, see if we need to process
         any release events. """
-    
-            
+    """for button in button_list:
+        if button.pressed:
+            button.on_release()"""
+
 
 class Canvas(arcade.Window):
     """
@@ -139,34 +160,40 @@ class Canvas(arcade.Window):
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
         arcade.set_background_color(arcade.color.GRAY_ASPARAGUS)
-        self.myButtons = None
-        self.L=None
+        self.line_buttons = None
+        self.L = None
         # If you have sprite lists, you should create them here,
         # and set them to None
 
     def setup(self):
         # Create your sprites and sprite lists here
-        self.myButtons=[]
-        self.L=[]
-        self.L_aux=[]
-        self.myButtons.append(TextButton(60, 570, 100, 40, "Slope", 14,"Arial"))
-        self.myButtons.append(TextButton(60, 510, 100, 40, "D.D.A.", 14,"Arial"))
-        self.myButtons.append(TextButton(60,450,100,40,"Bresenham",14))
+        self.line_buttons = []
+        self.L = []
+        self.L_aux = []
+        self.line_buttons.append(LineButton(
+            60, 570, 100, 40, "Slope", 14, "Arial", action_function=self.slope_line))
+        self.line_buttons.append(LineButton(
+            200, 570, 100, 40, "Slope Mod.", 14, "Arial", action_function=self.slope_line_mod))
+        self.line_buttons.append(LineButton(
+            60, 510, 100, 40, "D.D.A.", 14, "Arial", action_function=self.digital_differential_analyzer))
+        self.line_buttons.append(LineButton(60, 450, 100, 40, "Bresenham", 14, "Arial", action_function=self.bresenham))
+        self.line_buttons.append(LineButton(200, 450, 100, 40, "Bresenham Mod.", 14, "Arial", action_function=self.bresenham_mod))
 
     def on_draw(self):
         """
         Render the screen.
         """
-        
 
         # This command should happen before we start drawing. It will clear
         # the screen to the background color, and erase what we drew last frame.
         arcade.start_render()
-        for button in self.myButtons:
+        for button in self.line_buttons:
             button.draw()
-        for point in self.L:
-            arcade.draw_point(point[0],point[1], arcade.color.ZAFFRE, 10)
-        
+
+        if len(self.L) > 0:
+            arcade.draw_points(self.L, arcade.color.ZAFFRE, 5)
+
+        arcade.finish_render()
 
         # Call draw() on all your sprite lists below
 
@@ -176,9 +203,6 @@ class Canvas(arcade.Window):
         Normally, you'll call update() on the sprite lists that
         need it.
         """
-        for point in self.L:
-            arcade.draw_point(point[0],point[1], arcade.color.ZAFFRE, 10)
-        
 
     def on_key_press(self, key, key_modifiers):
         """
@@ -194,59 +218,182 @@ class Canvas(arcade.Window):
         Called whenever the user lets off a previously pressed key.
         """
         pass
-    
+
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         """
         Called whenever the mouse moves.
-        
+
         Con self.L_aux len 1 puedes hacer que el segundo punto sea el de esta x e y
         """
-        pass
-    
-    # Second Line drawer algorithm
-    def digital_differential_analyzer(self, x1, y1, x2, y2):
+
+        for button in self.line_buttons:
+            if button.pressed:
+                # si se han introducido dos puntos con un botón pulsado
+                if len(self.L_aux) == 1:
+                    button.action_function(
+                        self.L_aux[0][0], self.L_aux[0][1], x, y)
+
+    def slope_line(self, x1, y1, x2, y2):
         self.L.clear()
-        dx = x2-x1 
-        dy = y2-y1 
-        M=max(abs(dx),abs(dy))
-        dx_=dx/M
-        dy_=dy/M
-        x=x1+0.5
-        y=y1+0.5
+        x, y = x1, y1
+        dx, dy = x2 - x1, y2 - y1
+        m = dy/dx
+        b = y1 - m * x1
+        while x <= x2:
+            self.L.append([x, y])
+            x = x + 1
+            y = round(m*x + b)
+        print(self.L)
+
+    def slope_line_mod(self, x1, y1, x2, y2):
+        self.L.clear()
+        x, y = x1, y1
+        dx, dy = x2 - x1, y2 - y1
         
-        for _ in range(0,M+1):
+        if x2<x1:
+            x1, x2 = x2, x1
+            y1, y2 = y2, y1
+            x, y = x1, y1
+
+        if y1 == y2:
+            while x <= x2:
+                self.L.append([x, y])
+                x = x + 1
+        elif x1 == x2:
+            while y <= y2:
+                self.L.append([x, y])
+                y = y + 1
+       
+        else:
+            m = dy/dx
+            if m > 1 :
+                m = 1/m
+                b = x1 - m*y1
+                while y <= y2:
+                    self.L.append([x, y])
+                    y = y + 1
+                    x = round(m*y + b)
+            else:
+                b = y1 - m*x1
+                while x <= x2:
+                    self.L.append([x, y])
+                    x = x + 1
+                    y = round(m*x + b)
+        print(self.L)
+
+    
+    def bresenham(self, x1, y1, x2, y2):
+        self.L.clear()
+        x = x1
+        y = y1
+        dx = x2 - x1
+        dy = y2 - y1
+        m = dy/dx
+        ne = 2*dy - dx
+        for i in range(0, dx+1):
             self.L.append([x,y])
-            x=x+dx_
-            y=y+dy_
+            while ne > 0:
+                y = y + 1
+                ne = ne - 2*dx
+            x = x + 1
+            ne = ne + 2*dy
+            i = i + 1
+        print(self.L)
+
+    def bresenham_mod(self, x1, y1, x2, y2):
+        self.L.clear()
+        x = x1
+        y = y1
+        dx = x2 - x1
+        dy = y2 - y1
+        aux_dx , dx= dx , abs(dx)
+        aux_dy , dy= dy , abs(dy)
+
+        self.transform_quadrant(aux_dx,aux_dy)
+        
+        ne = 2*dy - dx
+        for i in range(0, dx+1):
+            self.L.append([x,y])
+            while ne > 0:
+                y = y + 1
+                ne = ne - 2*dx
+            x = x + 1
+            ne = ne + 2*dy
+            i = i + 1
+        
+        self.transform_quadrant(aux_dx,aux_dy)
+        for point in self.L:
+            if point[0]<0:
+                point[0]=2*x1+point[0]
+            if point[1]<0:
+                point[1]=2*y1+point[1]
+                
         print(self.L)
         
+    
+    def transform_quadrant(self,dx,dy):
+        #print(self.L)
+        if dx>=0 and dy>=0:
+            return self.L
+        elif dx<0 and dy>=0:
+            for coordinate in self.L:
+                aux=-coordinate[0]
+                coordinate[0]=copy.deepcopy(aux)
+        elif dx<0 and dy<0:
+            for coordinate in self.L:
+                
+                aux=-coordinate[0]
+                coordinate[0]=copy.deepcopy(aux)
+                aux=-coordinate[1]
+                coordinate[1]=copy.deepcopy(aux)
+        elif dx>=0 and dy<0:
+            for coordinate in self.L:
+                aux=-coordinate[1]
+                coordinate[1]=copy.deepcopy(aux)
+        
+        
+
+   # Second Line drawer algorithm
+
+    def digital_differential_analyzer(self, x1, y1, x2, y2):
+        self.L.clear()
+        dx = x2-x1
+        dy = y2-y1
+        M = max(abs(dx),abs(dy))
+        dx_ = dx/M
+        dy_ = dy/M
+        x = x1+0.5
+        y = y1+0.5
+
+        for _ in range(0, M+1):
+            self.L.append([x, y])
+            x = x+dx_
+            y = y+dy_
+        print(self.L)
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         """
         Called when the user presses a mouse button.
         """
-       
-        check_mouse_press_for_buttons(x, y, self.myButtons)
-        if check_buttons_click_area(x, y, self.myButtons) == False:     
-            for button in self.myButtons:
+        # En caso de no pinchar en un botón hay posibilidad de estar introduciendo puntos.
+        check_mouse_press_for_buttons(x, y, self.line_buttons)
+        if check_buttons_click_area(x, y, self.line_buttons) == False:
+            # comprobamos que botón está presionado
+            for button in self.line_buttons:
                 if button.pressed:
-                    self.L_aux.append([x,y])
+                    self.L_aux.append([x, y])
+                    self.L.append([x, y])
+                    # si se han introducido dos puntos con un botón pulsado
                     if len(self.L_aux) == 2:
-                        if button.text == 'Slope':
-                            print("Slope")       
-                        elif button.text == 'D.D.A.':
-                            self.digital_differential_analyzer(self.L_aux[0][0],self.L_aux[0][1],self.L_aux[1][0],self.L_aux[1][1])
-                        elif button.text == 'Bresenham':
-                            print ("Bresenham")
+                        button.action_function(self.L_aux[0][0], self.L_aux[0][1],self.L_aux[1][0],self.L_aux[1][1])
                         self.L_aux.clear()
 
     def on_mouse_release(self, x, y, button, key_modifiers):
         """
         Called when a user releases a mouse button.
         """
-        check_mouse_release_for_buttons(x, y, self.myButtons)
+        check_mouse_release_for_buttons(x, y, self.line_buttons)
 
-    
 
 def main():
     """ Main method """
