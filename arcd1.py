@@ -230,8 +230,7 @@ class Canvas(arcade.Window):
             if button.pressed:
                 # si se han introducido dos puntos con un botón pulsado
                 if len(self.L_aux) == 1:
-                    button.action_function(
-                        self.L_aux[0][0], self.L_aux[0][1], x, y)
+                    button.action_function(self.L_aux[0][0], self.L_aux[0][1],  x, y)
 
     def slope_line(self, x1, y1, x2, y2):
         self.L.clear()
@@ -260,6 +259,8 @@ class Canvas(arcade.Window):
                 self.L.append([x, y])
                 x = x + 1
         elif x1 == x2:
+            if y>y2:
+                y,y2=y2,y
             while y <= y2:
                 self.L.append([x, y])
                 y = y + 1
@@ -290,14 +291,14 @@ class Canvas(arcade.Window):
         dy = y2 - y1
         m = dy/dx
         ne = 2*dy - dx
-        for i in range(0, dx+1):
+        for _ in range(0, dx+1):
             self.L.append([x,y])
             while ne > 0:
                 y = y + 1
                 ne = ne - 2*dx
             x = x + 1
             ne = ne + 2*dy
-            i = i + 1
+           
         print(self.L)
 
     def bresenham_mod(self, x1, y1, x2, y2):
@@ -311,14 +312,24 @@ class Canvas(arcade.Window):
 
         self.transform_quadrant(aux_dx,aux_dy)
         
-        ne = 2*dy - dx
-        for i in range(0, dx+1):
-            self.L.append([x,y])
-            while ne > 0:
+        if dx == 0:
+            ne = 2*dx - dy
+            for _ in range(0, dy+1):
+                self.L.append([x,y])
+                while ne > 0:
+                    x = x + 1
+                    ne = ne - 2*dy
                 y = y + 1
-                ne = ne - 2*dx
-            x = x + 1
-            ne = ne + 2*dy
+                ne = ne + 2*dx
+        else:
+            ne = 2*dy - dx
+            for _ in range(0, dx+1):
+                self.L.append([x,y])
+                while ne > 0:
+                    y = y + 1
+                    ne = ne - 2*dx
+                x = x + 1
+                ne = ne + 2*dy
         
         self.transform_quadrant(aux_dx,aux_dy)
         for point in self.L:
