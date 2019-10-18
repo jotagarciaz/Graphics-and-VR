@@ -319,7 +319,6 @@ class Canvas(arcade.Window):
                 ne = ne - 2*dx
             x = x + 1
             ne = ne + 2*dy
-            i = i + 1
         
         self.transform_quadrant(aux_dx,aux_dy)
         for point in self.L:
@@ -337,19 +336,14 @@ class Canvas(arcade.Window):
             return self.L
         elif dx<0 and dy>=0:
             for coordinate in self.L:
-                aux=-coordinate[0]
-                coordinate[0]=copy.deepcopy(aux)
+                coordinate[0]=-coordinate[0]
         elif dx<0 and dy<0:
             for coordinate in self.L:
-                
-                aux=-coordinate[0]
-                coordinate[0]=copy.deepcopy(aux)
-                aux=-coordinate[1]
-                coordinate[1]=copy.deepcopy(aux)
+                coordinate[0]=-coordinate[0]
+                coordinate[1]=-coordinate[1]
         elif dx>=0 and dy<0:
             for coordinate in self.L:
-                aux=-coordinate[1]
-                coordinate[1]=copy.deepcopy(aux)
+                coordinate[1]=-coordinate[1]
         
         
 
