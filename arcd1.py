@@ -13,7 +13,7 @@ import copy
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-SCREEN_TITLE = "Starting Template"
+SCREEN_TITLE = "Lines and other algorithms"
 
 
 class TextButton:
@@ -140,12 +140,6 @@ def check_mouse_press_for_buttons(x, y, button_list):
             button.on_release()
 
 
-def check_mouse_release_for_buttons(x, y, button_list):
-    """ If a mouse button has been released, see if we need to process
-        any release events. """
-    """for button in button_list:
-        if button.pressed:
-            button.on_release()"""
 
 
 class Canvas(arcade.Window):
@@ -158,12 +152,20 @@ class Canvas(arcade.Window):
     """
 
     def __init__(self, width, height, title):
-        super().__init__(width, height, title)
+        super().__init__(width, height, title, resizable=True)
         arcade.set_background_color(arcade.color.GRAY_ASPARAGUS)
         self.line_buttons = None
         self.L = None
+
         # If you have sprite lists, you should create them here,
         # and set them to None
+
+    def on_resize(self, width, height):
+        """ This method is automatically called when the window is resized. """
+
+        # Call the parent. Failing to do this will mess up the coordinates, and default to 0,0 at the center and the
+        # edges being -1 to 1.
+        super().on_resize(width, height)
 
     def setup(self):
         # Create your sprites and sprite lists here
@@ -171,13 +173,15 @@ class Canvas(arcade.Window):
         self.L = []
         self.L_aux = []
         self.line_buttons.append(LineButton(
-            60, 570, 100, 40, "Slope", 14, "Arial", action_function=self.slope_line))
+            60, self.height-30, 100, 40, "Slope", 14, "Arial", action_function=self.slope_line))
         self.line_buttons.append(LineButton(
-            200, 570, 100, 40, "Slope Mod.", 14, "Arial", action_function=self.slope_line_mod))
+            200, self.height-30, 100, 40, "Slope Mod.", 14, "Arial", action_function=self.slope_line_mod))
         self.line_buttons.append(LineButton(
-            60, 510, 100, 40, "D.D.A.", 14, "Arial", action_function=self.digital_differential_analyzer))
-        self.line_buttons.append(LineButton(60, 450, 100, 40, "Bresenham", 14, "Arial", action_function=self.bresenham))
-        self.line_buttons.append(LineButton(200, 450, 100, 40, "Bresenham Mod.", 14, "Arial", action_function=self.bresenham_mod))
+            60, self.height-90, 100, 40, "D.D.A.", 14, "Arial", action_function=self.digital_differential_analyzer))
+        self.line_buttons.append(LineButton(60, self.height-150, 100, 40, "Bresenham I.", 14, "Arial", action_function=self.bresenham))
+        self.line_buttons.append(LineButton(200, self.height-150, 100, 40, "Bresenham I. Mod.", 14, "Arial", action_function=self.bresenham_mod))
+        self.line_buttons.append(LineButton(60, self.height-210, 100, 40, "Bresenham R.", 14, "Arial", action_function=self.bresenham_real))
+        self.line_buttons.append(LineButton(200, self.height-210, 100, 40, "Bresenham R. Mod.", 14, "Arial", action_function=self.bresenham_real_mod))
 
     def on_draw(self):
         """
@@ -197,27 +201,7 @@ class Canvas(arcade.Window):
 
         # Call draw() on all your sprite lists below
 
-    def update(self, delta_time):
-        """
-        All the logic to move, and the game logic goes here.
-        Normally, you'll call update() on the sprite lists that
-        need it.
-        """
-
-    def on_key_press(self, key, key_modifiers):
-        """
-        Called whenever a key on the keyboard is pressed.
-
-        For a full list of keys, see:
-        http://arcade.academy/arcade.key.html
-        """
-        pass
-
-    def on_key_release(self, key, key_modifiers):
-        """
-        Called whenever the user lets off a previously pressed key.
-        """
-        pass
+    
 
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         """
@@ -242,17 +226,19 @@ class Canvas(arcade.Window):
             self.L.append([x, y])
             x = x + 1
             y = round(m*x + b)
-        print(self.L)
+
+
 
     def slope_line_mod(self, x1, y1, x2, y2):
         self.L.clear()
-        x, y = x1, y1
-        dx, dy = x2 - x1, y2 - y1
         
         if x2<x1:
             x1, x2 = x2, x1
             y1, y2 = y2, y1
-            x, y = x1, y1
+
+        
+        dx, dy = x2 - x1, y2 - y1
+        x, y = x1, y1
 
         if y1 == y2:
             while x <= x2:
@@ -274,13 +260,23 @@ class Canvas(arcade.Window):
                     self.L.append([x, y])
                     y = y + 1
                     x = round(m*y + b)
+            elif m < -1:
+                m = abs(1/m)
+                b = x1 - m*y1
+                y_aux = y
+                while y >= y2:
+                    self.L.append([x, y])
+                    y = y - 1
+                    y_aux = y_aux + 1
+                    x = round(m*y_aux + b)
             else:
+
                 b = y1 - m*x1
                 while x <= x2:
                     self.L.append([x, y])
                     x = x + 1
                     y = round(m*x + b)
-        print(self.L)
+
 
     
     def bresenham(self, x1, y1, x2, y2):
@@ -289,7 +285,6 @@ class Canvas(arcade.Window):
         y = y1
         dx = x2 - x1
         dy = y2 - y1
-        m = dy/dx
         ne = 2*dy - dx
         for _ in range(0, dx+1):
             self.L.append([x,y])
@@ -299,7 +294,7 @@ class Canvas(arcade.Window):
             x = x + 1
             ne = ne + 2*dy
            
-        print(self.L)
+        
 
     def bresenham_mod(self, x1, y1, x2, y2):
         self.L.clear()
@@ -312,7 +307,7 @@ class Canvas(arcade.Window):
 
         self.transform_quadrant(aux_dx,aux_dy)
         
-        if dx == 0:
+        if dx == 0 or dy>dx:
             ne = 2*dx - dy
             for _ in range(0, dy+1):
                 self.L.append([x,y])
@@ -338,8 +333,71 @@ class Canvas(arcade.Window):
             if point[1]<0:
                 point[1]=2*y1+point[1]
                 
-        print(self.L)
+
+
+    def bresenham_real(self, x1, y1, x2, y2):
+        self.L.clear()
+        x = x1
+        y = y1
+        dx = x2 - x1
+        dy = y2 - y1
+        m = dy/dx
+        e = m - 1/2
+        for _ in range(dx+1):
+            self.L.append([x,y])
+            while e > 0:
+                y = y + 1
+                e = e - 1
+            x = x + 1
+            e = e + m
+
+    
+    def bresenham_real_mod(self, x1, y1, x2, y2):
+        self.L.clear()
+        x = x1
+        y = y1
+        aux_dx = x2 - x1
+        aux_dy = y2 - y1
+        dx = abs(aux_dx)
+        dy = abs(aux_dy)
         
+        
+        
+        self.transform_quadrant(aux_dx, aux_dy)
+
+        if dx == 0 or dy > dx:
+            m = dx/dy
+            e = m - 1/2
+            i = 0
+            while i <= dy:
+                self.L.append([x,y])
+                while e > 0:
+                    x = x + 1
+                    e = e - 1
+                y = y + 1
+                e = e + m
+                i = i + 1
+        else:
+            m=dy/dx
+            e = m - 1/2
+            i = 0
+            while i <= dx:
+                self.L.append([x,y])
+                while e > 0:
+                    y = y + 1
+                    e = e - 1
+                x = x + 1
+                e = e + m
+                i = i + 1
+
+        self.transform_quadrant(aux_dx, aux_dy)
+
+        for coordinate in self.L:
+            if coordinate[0] < 0:
+                coordinate[0] = 2*x1 + coordinate[0]
+            if coordinate[1] < 0:
+                coordinate[1] = 2*y1 + coordinate[1]
+
     
     def transform_quadrant(self,dx,dy):
         #print(self.L)
@@ -374,7 +432,6 @@ class Canvas(arcade.Window):
             self.L.append([x, y])
             x = x+dx_
             y = y+dy_
-        print(self.L)
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         """
@@ -391,13 +448,10 @@ class Canvas(arcade.Window):
                     # si se han introducido dos puntos con un botón pulsado
                     if len(self.L_aux) == 2:
                         button.action_function(self.L_aux[0][0], self.L_aux[0][1],self.L_aux[1][0],self.L_aux[1][1])
+                        print(self.L)
                         self.L_aux.clear()
 
-    def on_mouse_release(self, x, y, button, key_modifiers):
-        """
-        Called when a user releases a mouse button.
-        """
-        check_mouse_release_for_buttons(x, y, self.line_buttons)
+    
 
 
 def main():
