@@ -11,8 +11,8 @@ import arcade
 import os
 import copy
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 1200
+SCREEN_HEIGHT = 800
 SCREEN_TITLE = "Lines and other algorithms"
 
 
@@ -87,9 +87,10 @@ class TextButton:
             y += self.button_height
 
         arcade.draw_text(self.text, x, y,
-                         arcade.color.BLACK, font_size=self.font_size,
+                         arcade.color.WHITE_SMOKE, font_size=self.font_size,
                          width=self.width, align="center",
-                         anchor_x="center", anchor_y="center")
+                         anchor_x="center", anchor_y="center",bold=True
+                         )
 
     def click_area(self, x, y):
 
@@ -112,11 +113,12 @@ class LineButton(TextButton):
                  text,
                  font_size=18,
                  font_face="Arial",
-                 face_color=arcade.color.LIGHT_GRAY,
+                 face_color=arcade.color.CHARCOAL,
                  highlight_color=arcade.color.WHITE,
                  shadow_color=arcade.color.GRAY,
                  button_height=1,
-                 action_function=None):
+                 action_function=None           
+                 ):
         super().__init__(center_x, center_y, width, height, text, font_size, font_face,
               face_color, highlight_color, shadow_color, button_height, action_function)
 
@@ -153,10 +155,11 @@ class Canvas(arcade.Window):
 
     def __init__(self, width, height, title):
         super().__init__(width, height, title, resizable=True)
-        arcade.set_background_color(arcade.color.GRAY_ASPARAGUS)
+        arcade.set_background_color(arcade.color.WHITE_SMOKE)
         self.line_buttons = None
         self.L = None
-
+        self.first_time_drawing = True
+        self.illegal_action= False
         # If you have sprite lists, you should create them here,
         # and set them to None
 
@@ -173,15 +176,15 @@ class Canvas(arcade.Window):
         self.L = []
         self.L_aux = []
         self.line_buttons.append(LineButton(
-            60, self.height-30, 100, 40, "Slope", 14, "Arial", action_function=self.slope_line))
+            self.width-60, self.height-30, 120, 20, "Slope", 14, "Arial", action_function=self.slope_line))
         self.line_buttons.append(LineButton(
-            200, self.height-30, 100, 40, "Slope Mod.", 14, "Arial", action_function=self.slope_line_mod))
+            self.width-200, self.height-30, 120, 20, "Slope Mod.", 14, "Arial", action_function=self.slope_line_mod))
         self.line_buttons.append(LineButton(
-            60, self.height-90, 100, 40, "D.D.A.", 14, "Arial", action_function=self.digital_differential_analyzer))
-        self.line_buttons.append(LineButton(60, self.height-150, 100, 40, "Bresenham I.", 14, "Arial", action_function=self.bresenham))
-        self.line_buttons.append(LineButton(200, self.height-150, 100, 40, "Bresenham I. Mod.", 14, "Arial", action_function=self.bresenham_mod))
-        self.line_buttons.append(LineButton(60, self.height-210, 100, 40, "Bresenham R.", 14, "Arial", action_function=self.bresenham_real))
-        self.line_buttons.append(LineButton(200, self.height-210, 100, 40, "Bresenham R. Mod.", 14, "Arial", action_function=self.bresenham_real_mod))
+            self.width-60, self.height-70, 120, 20, "D.D.A.", 14, "Arial", action_function=self.digital_differential_analyzer))
+        self.line_buttons.append(LineButton(self.width-60, self.height-110, 120, 20, "Bresenham I.", 14, "Arial", action_function=self.bresenham))
+        self.line_buttons.append(LineButton(self.width-200, self.height-110, 120, 20, "Bresenham I. Mod.", 14, "Arial", action_function=self.bresenham_mod))
+        self.line_buttons.append(LineButton(self.width-60, self.height-150, 120, 20, "Bresenham R.", 14, "Arial", action_function=self.bresenham_real))
+        self.line_buttons.append(LineButton(self.width-200, self.height-150, 120, 20, "Bresenham R. Mod.", 14, "Arial", action_function=self.bresenham_real_mod))
 
     def on_draw(self):
         """
@@ -191,13 +194,34 @@ class Canvas(arcade.Window):
         # This command should happen before we start drawing. It will clear
         # the screen to the background color, and erase what we drew last frame.
         arcade.start_render()
+
         for button in self.line_buttons:
             button.draw()
 
-        if len(self.L) > 0:
-            arcade.draw_points(self.L, arcade.color.ZAFFRE, 5)
+        if self.first_time_drawing:
+            arcade.draw_text("Select a button",self.width/2,self.height-300 ,
+                            arcade.color.COAL, font_size=40,
+                            width=500, align="center",
+                            anchor_x="center", anchor_y="center",bold=True
+                            )
 
-        arcade.finish_render()
+            arcade.draw_text("then click somewhere in the screen",self.width/2,self.height-350 ,
+                            arcade.color.COAL, font_size=40,
+                            width=800, align="center",
+                            anchor_x="center", anchor_y="center",bold=True
+                    
+                            )
+        
+        if self.illegal_action:
+             arcade.draw_text("You're not allowed to do that.",self.width/2,self.height-350 ,
+                            arcade.color.RED_DEVIL, font_size=40,
+                            width=800, align="center",
+                            anchor_x="center", anchor_y="center",bold=True
+                            )              
+        if len(self.L) > 0:
+            arcade.draw_points(self.L, arcade.color.YALE_BLUE, 5)
+
+
 
         # Call draw() on all your sprite lists below
 
@@ -210,11 +234,17 @@ class Canvas(arcade.Window):
         Con self.L_aux len 1 puedes hacer que el segundo punto sea el de esta x e y
         """
 
+       
         for button in self.line_buttons:
             if button.pressed:
-                # si se han introducido dos puntos con un botón pulsado
                 if len(self.L_aux) == 1:
-                    button.action_function(self.L_aux[0][0], self.L_aux[0][1],  x, y)
+                    if check_buttons_click_area(x, y, self.line_buttons) == False:
+                        # si se han introducido dos puntos con un botón pulsado
+                        self.illegal_action=False
+                        button.action_function(self.L_aux[0][0], self.L_aux[0][1],  x, y)
+                    else:
+                        self.illegal_action = True
+                        self.L.clear()
 
     def slope_line(self, x1, y1, x2, y2):
         self.L.clear()
@@ -443,6 +473,7 @@ class Canvas(arcade.Window):
             # comprobamos que botón está presionado
             for button in self.line_buttons:
                 if button.pressed:
+                    self.first_time_drawing=False
                     self.L_aux.append([x, y])
                     self.L.append([x, y])
                     # si se han introducido dos puntos con un botón pulsado
@@ -450,7 +481,8 @@ class Canvas(arcade.Window):
                         button.action_function(self.L_aux[0][0], self.L_aux[0][1],self.L_aux[1][0],self.L_aux[1][1])
                         print(self.L)
                         self.L_aux.clear()
-
+        else:
+            self.L_aux.clear()
     
 
 
