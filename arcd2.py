@@ -337,7 +337,6 @@ class Canvas(arcade.Window):
         aux_dx , dx= dx , abs(dx)
         aux_dy , dy= dy , abs(dy)
 
-        self.transform_quadrant(aux_dx,aux_dy)
         
         if dx == 0 or dy>dx:
             ne = 2*dx - dy
@@ -358,13 +357,16 @@ class Canvas(arcade.Window):
                 x = x + 1
                 ne = ne + 2*dy
         
-        self.transform_quadrant(aux_dx,aux_dy)
-        for point in self.L:
-            if point[0]<0:
-                point[0]=2*x1+point[0]
-            if point[1]<0:
-                point[1]=2*y1+point[1]
-                
+        self.L=np.asarray(self.L)
+        self.transform_quadrant(aux_dx, aux_dy)
+
+        if self.L[0][0]<0:
+            x1=2*x1
+            self.L[...,0] +=x1
+        if self.L[0][1]<0:
+            y1=2*y1
+            self.L[...,1] +=y1
+        self.L=np.array(self.L).tolist()        
 
 
     def bresenham_real(self, x1, y1, x2, y2):
@@ -393,10 +395,6 @@ class Canvas(arcade.Window):
         dx = abs(aux_dx)
         dy = abs(aux_dy)
         
-        
-        np.asarray(self.L)
-        self.transform_quadrant(aux_dx, aux_dy)
-        np.array(self.L).tolist()
 
         if dx == 0 or dy > dx:
             m = dx/dy
@@ -423,31 +421,28 @@ class Canvas(arcade.Window):
                 e = e + m
                 i = i + 1
 
-        np.asarray(self.L)
+        self.L=np.asarray(self.L)
         self.transform_quadrant(aux_dx, aux_dy)
-        np.array(self.L).tolist()
-
-        for coordinate in self.L:
-            if coordinate[0] < 0:
-                coordinate[0] = 2*x1 + coordinate[0]
-            if coordinate[1] < 0:
-                coordinate[1] = 2*y1 + coordinate[1]
+        
+        if self.L[0][0]<0:
+            x1=2*x1
+            self.L[...,0] +=x1
+        if self.L[0][1]<0:
+            y1=2*y1
+            self.L[...,1] +=y1
+        self.L=np.array(self.L).tolist()   
 
     
     def transform_quadrant(self,dx,dy):
-        #print(self.L)
+
         if dx>=0 and dy>=0:
             return self.L
         elif dx<0 and dy>=0:
-            for coordinate in self.L:
-                coordinate[0]=-coordinate[0]
+            self.L=self.L.dot(np.array([[-1,0],[0,1]]))   
         elif dx<0 and dy<0:
-            for coordinate in self.L:
-                coordinate[0]=-coordinate[0]
-                coordinate[1]=-coordinate[1]
+            self.L=self.L.dot(np.array([[-1,0],[0,-1]]))
         elif dx>=0 and dy<0:
-            for coordinate in self.L:
-                coordinate[1]=-coordinate[1]
+            self.L=self.L.dot(np.array([[1,0],[0,-1]]))
         
         
 
