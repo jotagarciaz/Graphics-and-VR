@@ -12,10 +12,11 @@ with different lines algorithms:
 import arcade
 import os
 import copy
+import numpy as np
 
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
-SCREEN_TITLE = "Lines and other algorithms"
+SCREEN_TITLE = "transformation 2D algorithms"
 
 
 class TextButton:
@@ -142,7 +143,6 @@ def check_mouse_press_for_buttons(x, y, button_list):
             button.on_release()
         elif button.pressed and check_buttons_click_area(x, y, button_list):
             button.on_release()
-
 
 
 
@@ -394,8 +394,9 @@ class Canvas(arcade.Window):
         dy = abs(aux_dy)
         
         
-        
+        np.asarray(self.L)
         self.transform_quadrant(aux_dx, aux_dy)
+        np.array(self.L).tolist()
 
         if dx == 0 or dy > dx:
             m = dx/dy
@@ -422,7 +423,9 @@ class Canvas(arcade.Window):
                 e = e + m
                 i = i + 1
 
+        np.asarray(self.L)
         self.transform_quadrant(aux_dx, aux_dy)
+        np.array(self.L).tolist()
 
         for coordinate in self.L:
             if coordinate[0] < 0:
