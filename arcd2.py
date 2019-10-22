@@ -159,6 +159,7 @@ class Canvas(arcade.Window):
         super().__init__(width, height, title, resizable=True)
         arcade.set_background_color(arcade.color.WHITE_SMOKE)
         self.line_buttons = None
+        self.transformation_buttons = None
         self.L = None
         self.first_time_drawing = True
         self.illegal_action= False
@@ -175,6 +176,7 @@ class Canvas(arcade.Window):
     def setup(self):
         # Create your sprites and sprite lists here
         self.line_buttons = []
+        self.transformation_buttons = []
         self.L = []
         self.L_aux = []
         self.line_buttons.append(LineButton(
@@ -187,7 +189,9 @@ class Canvas(arcade.Window):
         self.line_buttons.append(LineButton(self.width-200, self.height-110, 120, 25, "Bresenham I. Mod.", 14, "Arial", action_function=self.bresenham_mod))
         self.line_buttons.append(LineButton(self.width-60, self.height-150, 120, 25, "Bresenham R.", 14, "Arial", action_function=self.bresenham_real))
         self.line_buttons.append(LineButton(self.width-200, self.height-150, 120, 25, "Bresenham R. Mod.", 14, "Arial", action_function=self.bresenham_real_mod))
-
+        
+        self.transformation_buttons.append(LineButton(70, self.height-30, 120, 25, "Translation.", 14, "Arial", action_function=self.translation))
+    
     def on_draw(self):
         """
         Render the screen.
@@ -198,6 +202,9 @@ class Canvas(arcade.Window):
         arcade.start_render()
 
         for button in self.line_buttons:
+            button.draw()
+
+        for button in self.transformation_buttons:
             button.draw()
 
         if self.first_time_drawing:
@@ -247,6 +254,23 @@ class Canvas(arcade.Window):
                     else:
                         self.illegal_action = True
                         self.L.clear()
+        
+        for button in self.transformation_buttons:
+            if len(self.L_aux) == 1:
+                if check_buttons_click_area(x, y, self.transformation_buttons) == True:
+                    self.illegal_action = True
+                    self.L.clear()
+    
+
+    def translation(self,x,y):
+        self.L=np.asarray(self.L)
+        m  = self.L.shape
+        aux = np.ones((m[0],1))
+        aux = np.hstack((self.L,aux))
+        aux1=np.array([[1,0,x],[0,1,y],[0,0,1]])
+        self.L=aux1.dot(np.transpose(aux))
+        self.L = np.transpose(np.delete(self.L,2,0))
+        print(self.L)
 
     def slope_line(self, x1, y1, x2, y2):
         self.L.clear()
@@ -468,8 +492,12 @@ class Canvas(arcade.Window):
         Called when the user presses a mouse button.
         """
         # En caso de no pinchar en un botón hay posibilidad de estar introduciendo puntos.
+        
         check_mouse_press_for_buttons(x, y, self.line_buttons)
+        check_mouse_press_for_buttons(x, y, self.transformation_buttons)
+
         if check_buttons_click_area(x, y, self.line_buttons) == False:
+            
             # comprobamos que botón está presionado
             for button in self.line_buttons:
                 if button.pressed:
@@ -479,8 +507,14 @@ class Canvas(arcade.Window):
                     # si se han introducido dos puntos con un botón pulsado
                     if len(self.L_aux) == 2:
                         button.action_function(self.L_aux[0][0], self.L_aux[0][1],self.L_aux[1][0],self.L_aux[1][1])
-                        print(self.L)
+                        #print(self.L)
                         self.L_aux.clear()
+
+            
+        elif check_buttons_click_area(x, y, self.transformation_buttons) == False:
+            for button in self.transformation_buttons:
+                if button.pressed:
+                        button.action_function(5,5)
         else:
             self.L_aux.clear()
     
