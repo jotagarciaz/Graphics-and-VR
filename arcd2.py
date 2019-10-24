@@ -13,6 +13,7 @@ import arcade
 import os
 import copy
 import numpy as np
+import math
 
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
@@ -263,6 +264,9 @@ class Canvas(arcade.Window):
     
 
     def translation(self,x,y):
+        
+        x = x-self.L[0][0]
+        y = y-self.L[0][1]
         self.L=np.asarray(self.L)
         m  = self.L.shape
         aux = np.ones((m[0],1))
@@ -270,7 +274,53 @@ class Canvas(arcade.Window):
         aux1=np.array([[1,0,x],[0,1,y],[0,0,1]])
         self.L=aux1.dot(np.transpose(aux))
         self.L = np.transpose(np.delete(self.L,2,0))
+        self.L=np.array(self.L).tolist() 
         print(self.L)
+    
+    def escale(self,sx,sy):
+        coordinate_aux = self.L[0]
+        print(coordinate_aux)
+        self.translation(0,0)
+        print(self.L)
+        self.L=np.asarray(self.L)
+        m  = self.L.shape
+        aux = np.ones((m[0],1))
+        aux = np.hstack((self.L,aux))
+        aux1=np.array([[sx,0,0],[0,sy,0],[0,0,1]])
+        self.L=aux1.dot(np.transpose(aux))
+        self.L = np.transpose(np.delete(self.L,2,0))
+        self.L=np.array(self.L).tolist()
+        self.translation(coordinate_aux[0],coordinate_aux[1])
+
+    def rotate(self, alpha):
+        coordinate_aux = self.L[0]
+        self.translation(0,0)
+        self.L=np.asarray(self.L)
+        m  = self.L.shape
+        aux = np.ones((m[0],1))
+        aux = np.hstack((self.L,aux))
+
+        cos_alpha = math.cos(math.radians(alpha))
+        sen_alpha = math.sin(math.radians(alpha))
+        aux1=np.array([[cos_alpha,sen_alpha,0],[-sen_alpha,cos_alpha,0],[0,0,1]])
+        self.L=aux1.dot(np.transpose(aux))
+        self.L = np.transpose(np.delete(self.L,2,0))
+        self.L=np.array(self.L).tolist()
+        self.translation(coordinate_aux[0],coordinate_aux[1])
+
+    def shearing(self,cx,cy):
+        coordinate_aux = self.L[0]
+        self.translation(0,0)
+        self.L=np.asarray(self.L)
+        m  = self.L.shape
+        aux = np.ones((m[0],1))
+        aux = np.hstack((self.L,aux))
+        aux1=np.array([[1,cx,0],[cy,1,0],[0,0,1]])
+        self.L=aux1.dot(np.transpose(aux))
+        self.L = np.transpose(np.delete(self.L,2,0))
+        self.L=np.array(self.L).tolist()
+        self.translation(coordinate_aux[0],coordinate_aux[1])
+
 
     def slope_line(self, x1, y1, x2, y2):
         self.L.clear()
@@ -507,14 +557,18 @@ class Canvas(arcade.Window):
                     # si se han introducido dos puntos con un botón pulsado
                     if len(self.L_aux) == 2:
                         button.action_function(self.L_aux[0][0], self.L_aux[0][1],self.L_aux[1][0],self.L_aux[1][1])
-                        #print(self.L)
+                        
+
+                        #self.escale(0.5,0.5)
+                        #self.translation(10,10)
+                        #self.rotate(75)
                         self.L_aux.clear()
 
             
         elif check_buttons_click_area(x, y, self.transformation_buttons) == False:
             for button in self.transformation_buttons:
                 if button.pressed:
-                        button.action_function(5,5)
+                        button.action_function(20,20)
         else:
             self.L_aux.clear()
     
