@@ -164,6 +164,7 @@ class Canvas(arcade.Window):
 		self.L = None
 		self.first_time_drawing = True
 		self.illegal_action= False
+		self.Draw = None
 		# If you have sprite lists, you should create them here,
 		# and set them to None
 
@@ -179,6 +180,7 @@ class Canvas(arcade.Window):
 		self.line_buttons = []
 		self.transformation_buttons = []
 		self.L = []
+		self.Draw = []
 		self.L_aux = []
 		self.line_buttons.append(LineButton(
 			self.width-60, self.height-30, 120, 25, "Slope", 14, "Arial", action_function=self.slope_line))
@@ -227,9 +229,12 @@ class Canvas(arcade.Window):
 							arcade.color.RED_DEVIL, font_size=40,
 							width=800, align="center",
 							anchor_x="center", anchor_y="center",bold=True
-							)              
+							)
 		if len(self.L) > 0:
-			arcade.draw_points(self.L, arcade.color.YALE_BLUE, 5)
+			arcade.draw_points(self.L, arcade.color.YALE_BLUE, 5)              
+		if len(self.Draw) > 0:
+			for l in self.Draw:
+				arcade.draw_points(l, arcade.color.RED_DEVIL, 5)
 
 
 
@@ -251,16 +256,12 @@ class Canvas(arcade.Window):
 					if check_buttons_click_area(x, y, self.line_buttons) == False:
 						# si se han introducido dos puntos con un botón pulsado
 						self.illegal_action=False
+
 						button.action_function(self.L_aux[0][0], self.L_aux[0][1],  x, y)
 					else:
 						self.illegal_action = True
 						self.L.clear()
-		
-		for button in self.transformation_buttons:
-			if len(self.L_aux) == 1:
-				if check_buttons_click_area(x, y, self.transformation_buttons) == True:
-					self.illegal_action = True
-					self.L.clear()
+
 	
 
 	def translation(self,x,y):  
@@ -575,7 +576,7 @@ class Canvas(arcade.Window):
 						#self.rotate(75)
 						self.reflexion(False)
 						button.action_function(self.L_aux[0][0], self.L_aux[0][1],self.L_aux[1][0],self.L_aux[1][1])
-						
+						self.Draw.append(copy.deepcopy(self.L))
 
 						
 						
