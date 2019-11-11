@@ -14,18 +14,22 @@ class Aplicacion:
 		self.casa()
 		self.ventana1.mainloop()
 
+	
 
 	def casa(self):	
-		self.canvas1.create_line(self.points[0],self.points[1],fill="gold")
-		self.canvas1.create_line(self.points[0],self.points[2],fill="gold")
-		self.canvas1.create_line(self.points[2],self.points[3],fill="gold")
-		self.canvas1.create_line(self.points[1],self.points[3],fill="gold")
-		self.canvas1.create_line(self.points[1],self.points[4],fill="gold")
-		self.canvas1.create_line(self.points[4],self.points[3],fill="gold")
+		
+		
+		self.create_l(self.points[0],self.points[1])
+		self.create_l(self.points[0],self.points[2])
+		self.create_l(self.points[2],self.points[3])
+		self.create_l(self.points[1],self.points[3])
+		self.create_l(self.points[1],self.points[4])
+		self.create_l(self.points[4],self.points[3])
 		#puerta
-		self.canvas1.create_line(self.points[5],self.points[8],fill="gold")
-		self.canvas1.create_line(self.points[6],self.points[7],fill="gold")
-		self.canvas1.create_line(self.points[7],self.points[8],fill="gold")
+		self.create_l(self.points[5],self.points[8])
+		self.create_l(self.points[6],self.points[7])
+		self.create_l(self.points[7],self.points[8])
+		
 
 	def entradadatos(self):
 		self.lf1=ttk.LabelFrame(self.ventana1,text="Transformaciones 2D")
@@ -53,6 +57,72 @@ class Aplicacion:
 		self.boton1.grid(column=0, row=3, columnspan=2, padx=5, pady=5, sticky="we")
 		self.entry1.focus()
 
+	def create_l(self,p1,p2):
+		self.L=[]
+		self.bresenham_real_mod(p1,p2)
+		for p in self.L:
+			self.canvas1.create_line(p[0],p[1],p[0]+1,p[1],fill="gold")
+
+	def bresenham_real_mod(self,p1,p2):
+		x1, y1, x2, y2 = p1[0],p1[1],p2[0],p2[1]
+		
+		x = x1
+		y = y1
+		aux_dx = x2 - x1
+		aux_dy = y2 - y1
+		dx = abs(aux_dx)
+		dy = abs(aux_dy)
+		
+
+		if dx == 0 or dy > dx:
+			m = dx/dy
+			e = m - 1/2
+			i = 0
+			while i <= dy:
+				self.L.append([x,y])
+				while e > 0:
+					x = x + 1
+					e = e - 1
+				y = y + 1
+				e = e + m
+				i = i + 1
+		else:
+			m=dy/dx
+			e = m - 1/2
+			i = 0
+			while i <= dx:
+				self.L.append([x,y])
+				while e > 0:
+					y = y + 1
+					e = e - 1
+				x = x + 1
+				e = e + m
+				i = i + 1
+
+		self.L=np.asarray(self.L)
+		self.transform_quadrant(aux_dx, aux_dy)
+		
+		if self.L[0][0]<0:
+			x1=2*x1
+			self.L[...,0] +=x1
+		if self.L[0][1]<0:
+			y1=2*y1
+			self.L[...,1] +=y1
+		self.L=np.array(self.L).tolist()   
+
+	
+	def transform_quadrant(self,dx,dy):
+
+		if dx>=0 and dy>=0:
+			return self.L
+		elif dx<0 and dy>=0:
+			self.L=self.L.dot(np.array([[-1,0],[0,1]]))   
+		elif dx<0 and dy<0:
+			self.L=self.L.dot(np.array([[-1,0],[0,-1]]))
+		elif dx>=0 and dy<0:
+			self.L=self.L.dot(np.array([[1,0],[0,-1]]))
+		
+		
 	def translate(self):
 		self.canvas1.delete(tk.ALL)
 		
