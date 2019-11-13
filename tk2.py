@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 import numpy as np
+import math 
+from copy import deepcopy 
 
 class Aplicacion:
 	def __init__(self):
@@ -10,11 +12,13 @@ class Aplicacion:
 		self.canvas1.grid(column=0, row=0)
 
 		self.points = [[118, 345],[118, 138],[436, 345],[436,138],[268,75],[218,345],[298,345],[298,240],[218,240]]
-
+		self.med_casa = []
 		self.casa()
 		self.ventana1.mainloop()
 
 	
+	def change_origin(self,y):
+		return self.canvas1.winfo_height() - y
 
 	def casa(self):	
 		
@@ -29,8 +33,9 @@ class Aplicacion:
 		group.append(self.create_l(self.points[5],self.points[8]))
 		group.append(self.create_l(self.points[6],self.points[7]))
 		group.append(self.create_l(self.points[7],self.points[8]))
-		med = self.median_group(group)
-		self.canvas1.create_line(med[0]-2,med[1],med[0]+2,med[1],width=3,fill="red")
+		
+		self.med_casa = self.median_group(group)
+		self.canvas1.create_line(self.med_casa[0]-2,self.med_casa[1],self.med_casa[0]+2,self.med_casa[1],width=3,fill="red")
 
 	def median_line(self,l):
 		m = np.median(l, axis = 0)
@@ -87,8 +92,41 @@ class Aplicacion:
 		self.entry4=ttk.Entry(self.lf1, textvariable=self.dato4)
 		self.entry4.grid(column=3, row=3, padx=5, pady=5)
 
-		self.boton1=ttk.Button(self.lf1, text="Aplicar cambios", command=self.escale)
-		self.boton1.grid(column=0, row=5, columnspan=2, padx=5, pady=5, sticky="we")
+		# Rotar #
+		self.label5=ttk.Label(self.lf1, text="Rotar")
+		self.label5.grid(column=0,row=4, padx=5, pady=5)
+		
+		self.label6=ttk.Label(self.lf1, text="º")
+		self.label6.grid(column=0,row=5, padx=5, pady=5)
+		
+		self.dato5=tk.DoubleVar()
+		self.entry5=ttk.Entry(self.lf1, textvariable=self.dato5)
+		self.entry5.grid(column=1, row=5, padx=1, pady=1)
+
+		# Shearing #
+		self.label7=ttk.Label(self.lf1, text="Cizalladura")
+		self.label7.grid(column=0,row=6, padx=5, pady=5)
+
+		self.label7=ttk.Label(self.lf1, text="x")
+		self.label7.grid(column=0,row=7, padx=1, pady=1)
+
+		self.dato6=tk.DoubleVar()
+		self.entry6=ttk.Entry(self.lf1, textvariable=self.dato6)
+		self.entry6.grid(column=1, row=7, padx=1, pady=1)
+
+		self.label8=ttk.Label(self.lf1, text="y")
+		self.label8.grid(column=2,row=7, padx=1, pady=1)
+
+		self.dato7=tk.DoubleVar()
+		self.entry7=ttk.Entry(self.lf1, textvariable=self.dato7)
+		self.entry7.grid(column=3, row=7, padx=5, pady=5)
+
+		# Reflect #
+		self.label7=ttk.Label(self.lf1, text="Reflejar")
+		self.label7.grid(column=0,row=8, padx=5, pady=5)
+
+		self.boton1=ttk.Button(self.lf1, text="Aplicar cambios", command=self.shearing)
+		self.boton1.grid(column=0, row=10, columnspan=2, padx=5, pady=5, sticky="we")
 		self.entry1.focus()
 
 	def create_l(self,p1,p2):
@@ -158,14 +196,11 @@ class Aplicacion:
 			self.L=self.L.dot(np.array([[1,0],[0,-1]]))
 		
 		
-	def translate(self):
+	def translate(self,x = None,y = None):
 		self.canvas1.delete(tk.ALL)
-		
-		x = self.dato1.get() 
-		y = self.dato2.get()
 
-		#x = self.dato1.get() - self.points[0][0]
-		#y = self.dato2.get() - self.points[0][1]
+		x = self.dato1.get() #- self.med_casa[0]
+		y = self.dato2.get() #- self.med_casa[1]
 		self.L_aux=np.asarray(self.points)
 		m  = self.L_aux.shape
 		aux = np.ones((m[0],1))
@@ -176,6 +211,7 @@ class Aplicacion:
 		self.points=np.array(self.L_aux).tolist() 
 
 		self.casa()
+
 	
 	def escale(self):
 		self.canvas1.delete(tk.ALL)
@@ -183,24 +219,36 @@ class Aplicacion:
 		sx = self.dato3.get() 
 		sy = self.dato4.get()
 
-		coordinate_aux = self.points[0]
+		coordinate_aux = self.med_casa
 		#self.translate(0,0)
 		self.L_aux=np.asarray(self.points)
+		
+		self.L_aux=np.subtract(self.L_aux,self.med_casa)
 		m  = self.L_aux.shape
 		aux = np.ones((m[0],1))
 		aux = np.hstack((self.L_aux,aux))
 		aux1 = np.array([[sx,0,0],[0,sy,0],[0,0,1]])
 		self.L_aux = aux1.dot(np.transpose(aux))
 		self.L_aux = np.transpose(np.delete(self.L_aux,2,0))
+		self.L_aux=np.add(self.L_aux,self.med_casa)
 		self.points = np.array(self.L_aux).tolist()
+		
 		#self.translate(coordinate_aux[0],coordinate_aux[1])
 		
 		self.casa()
 
-	def rotate(self, alpha):
-		coordinate_aux = self.L_aux[0]
-		self.translation(0,0)
-		self.L_aux=np.asarray(self.L_aux)
+	def rotate(self):
+		self.canvas1.delete(tk.ALL)
+		
+		alpha = self.dato5.get() 
+		
+		self.med_casa[1] = deepcopy(self.change_origin(self.med_casa[1]))
+		coordinate_aux = self.med_casa
+		for i in range(len(self.points)):
+			self.points[i][1] = self.change_origin(self.points[i][1])
+		self.L_aux=np.asarray(self.points)
+		self.L_aux=np.subtract(self.L_aux,self.med_casa)
+
 		m  = self.L_aux.shape
 		aux = np.ones((m[0],1))
 		aux = np.hstack((self.L_aux,aux))
@@ -210,21 +258,43 @@ class Aplicacion:
 		aux1=np.array([[cos_alpha,sen_alpha,0],[-sen_alpha,cos_alpha,0],[0,0,1]])
 		self.L_aux=aux1.dot(np.transpose(aux))
 		self.L_aux = np.transpose(np.delete(self.L_aux,2,0))
-		self.L_aux=np.array(self.L_aux).tolist()
-		self.translation(coordinate_aux[0],coordinate_aux[1])
+		self.L_aux=np.add(self.L_aux,self.med_casa)
+		
+		self.med_casa[1] = deepcopy(self.change_origin(self.med_casa[1]))
+		self.points = np.array(self.L_aux).tolist()
+		for i in range(len(self.points)):
+			self.points[i][1] = self.change_origin(self.points[i][1])
+		self.casa()
+		#self.translation(coordinate_aux[0],coordinate_aux[1])
 
-	def shearing(self,cx,cy):
-		coordinate_aux = self.L_aux[0]
-		self.translation(0,0)
-		self.L_aux=np.asarray(self.L_aux)
+	def shearing(self):
+		self.canvas1.delete(tk.ALL)
+		
+		cx = self.dato6.get() 
+		cy = self.dato7.get()
+
+
+		self.med_casa[1] = deepcopy(self.change_origin(self.med_casa[1]))
+		coordinate_aux = self.med_casa
+		for i in range(len(self.points)):
+			self.points[i][1] = self.change_origin(self.points[i][1])
+		self.L_aux=np.asarray(self.points)
+		self.L_aux=np.subtract(self.L_aux,self.med_casa)
+
+
 		m  = self.L_aux.shape
 		aux = np.ones((m[0],1))
 		aux = np.hstack((self.L_aux,aux))
 		aux1=np.array([[1,cx,0],[cy,1,0],[0,0,1]])
 		self.L_aux=aux1.dot(np.transpose(aux))
 		self.L_aux = np.transpose(np.delete(self.L_aux,2,0))
-		self.L_aux=np.array(self.L_aux).tolist()
-		self.translation(coordinate_aux[0],coordinate_aux[1])
+		self.L_aux=np.add(self.L_aux,self.med_casa)
+		
+		self.med_casa[1] = deepcopy(self.change_origin(self.med_casa[1]))
+		self.points = np.array(self.L_aux).tolist()
+		for i in range(len(self.points)):
+			self.points[i][1] = self.change_origin(self.points[i][1])
+		self.casa()
 
 	def reflexion(self,reflect_x_or_y):
 		#reflect_x_or_y = true then refleclt x else reflect y
