@@ -125,12 +125,16 @@ class Aplicacion:
 		self.label7=ttk.Label(self.lf1, text="Reflejar")
 		self.label7.grid(column=0,row=8, padx=5, pady=5)
 		self.dato8=tk.IntVar()
-		self.r1 = ttk.Radiobutton(self.lf1, text="Option 1", variable=self.dato8, value=1)
+		self.r1 = ttk.Radiobutton(self.lf1, text="reflejar en x", variable=self.dato8, value=1)
 		self.r1.grid(column=0,row=9, padx=5, pady=5)
-		self.r2 = ttk.Radiobutton(self.lf1, text="Option 2", variable=self.dato8, value=2)
+		self.r2 = ttk.Radiobutton(self.lf1, text="reflejar en y", variable=self.dato8, value=2)
 		self.r2.grid(column=1,row=9, padx=5, pady=5)
-		self.r3 = ttk.Radiobutton(self.lf1, text="Option 3", variable=self.dato8, value=3)
+		self.r3 = ttk.Radiobutton(self.lf1, text="refl. ángulo", variable=self.dato8, value=3)
 		self.r3.grid(column=2,row=9, padx=5, pady=5)
+		
+		self.dato9=tk.DoubleVar()
+		self.entry8=ttk.Entry(self.lf1, textvariable=self.dato9)
+		self.entry8.grid(column=3, row=9, padx=5, pady=5)
 		
 
 		self.boton1=ttk.Button(self.lf1, text="Aplicar cambios", command=self.apply_transformations)
@@ -148,6 +152,8 @@ class Aplicacion:
 			self.shearing()
 		if (self.dato8.get()) > 0:
 			self.reflexion()
+		
+		self.casa()
 
 	def create_l(self,p1,p2):
 		self.L=[]
@@ -230,7 +236,7 @@ class Aplicacion:
 		self.L_aux = np.transpose(np.delete(self.L_aux,2,0))
 		self.points=np.array(self.L_aux).tolist() 
 
-		self.casa()
+		
 
 	
 	def escale(self):
@@ -255,12 +261,13 @@ class Aplicacion:
 		
 		#self.translate(coordinate_aux[0],coordinate_aux[1])
 		
-		self.casa()
+		
 
-	def rotate(self):
+	def rotate(self,alpha = None):
 		self.canvas1.delete(tk.ALL)
 		
-		alpha = self.dato5.get() 
+		if alpha is None:
+			alpha = self.dato5.get() 
 		
 		self.med_casa[1] = deepcopy(self.change_origin(self.med_casa[1]))
 		coordinate_aux = self.med_casa
@@ -284,7 +291,7 @@ class Aplicacion:
 		self.points = np.array(self.L_aux).tolist()
 		for i in range(len(self.points)):
 			self.points[i][1] = self.change_origin(self.points[i][1])
-		self.casa()
+		
 		#self.translation(coordinate_aux[0],coordinate_aux[1])
 
 	def shearing(self):
@@ -314,7 +321,7 @@ class Aplicacion:
 		self.points = np.array(self.L_aux).tolist()
 		for i in range(len(self.points)):
 			self.points[i][1] = self.change_origin(self.points[i][1])
-		self.casa()
+		
 
 	def reflexion(self):
 		
@@ -323,6 +330,9 @@ class Aplicacion:
 		
 		reflect_x_or_y = self.dato8.get() 
 		
+		if reflect_x_or_y == 3 and self.dato9.get() !=0:
+			self.rotate(self.dato9.get())
+
 		self.med_casa[1] = deepcopy(self.change_origin(self.med_casa[1]))
 		coordinate_aux = self.med_casa
 		for i in range(len(self.points)):
@@ -334,21 +344,24 @@ class Aplicacion:
 		m  = self.L_aux.shape
 		aux = np.ones((m[0],1))
 		aux = np.hstack((self.L_aux,aux))
-		if reflect_x_or_y == 1:
+		if reflect_x_or_y == 1 or reflect_x_or_y == 3:
 			aux1=np.array([[1,0,0],[0,-1,0],[0,0,1]])
 		elif reflect_x_or_y == 2:
-			aux1=np.array([[-1,0,0],[0,1,0],[0,0,1]])
+			aux1=np.array([[-1,0,0],[0,1,0],[0,0,1]])	
+	
+			
+		self.L_aux=aux1.dot(np.transpose(aux))
+		self.L_aux = np.transpose(np.delete(self.L_aux,2,0))
 		
-		if reflect_x_or_y <= 2:
-			
-			self.L_aux=aux1.dot(np.transpose(aux))
-			self.L_aux = np.transpose(np.delete(self.L_aux,2,0))
-			
+
 		self.L_aux=np.add(self.L_aux,self.med_casa)
 		self.med_casa[1] = deepcopy(self.change_origin(self.med_casa[1]))
 		self.points = np.array(self.L_aux).tolist()
 		for i in range(len(self.points)):
 			self.points[i][1] = self.change_origin(self.points[i][1])
-		self.casa()
+		
+		if reflect_x_or_y == 3== 3 and self.dato9.get() !=0:
+			self.rotate(-self.dato9.get())
+
 
 aplicacion1=Aplicacion()
