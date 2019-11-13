@@ -117,25 +117,37 @@ class Aplicacion:
 		self.label8=ttk.Label(self.lf1, text="y")
 		self.label8.grid(column=2,row=7, padx=1, pady=1)
 
-		self.dato7=tk.BooleanVar()
+		self.dato7=tk.DoubleVar()
 		self.entry7=ttk.Entry(self.lf1, textvariable=self.dato7)
 		self.entry7.grid(column=3, row=7, padx=5, pady=5)
 
 		# Reflect #
 		self.label7=ttk.Label(self.lf1, text="Reflejar")
 		self.label7.grid(column=0,row=8, padx=5, pady=5)
-		self.dato8=tk.DoubleVar()
-		self.r1 = ttk.Radiobutton(self.lf1, text="Option 1", variable=self.dato8, value=True)
+		self.dato8=tk.IntVar()
+		self.r1 = ttk.Radiobutton(self.lf1, text="Option 1", variable=self.dato8, value=1)
 		self.r1.grid(column=0,row=9, padx=5, pady=5)
-		self.r2 = ttk.Radiobutton(self.lf1, text="Option 2", variable=self.dato8, value=False)
+		self.r2 = ttk.Radiobutton(self.lf1, text="Option 2", variable=self.dato8, value=2)
 		self.r2.grid(column=1,row=9, padx=5, pady=5)
 		self.r3 = ttk.Radiobutton(self.lf1, text="Option 3", variable=self.dato8, value=3)
 		self.r3.grid(column=2,row=9, padx=5, pady=5)
 		
 
-		self.boton1=ttk.Button(self.lf1, text="Aplicar cambios", command=self.reflexion)
+		self.boton1=ttk.Button(self.lf1, text="Aplicar cambios", command=self.apply_transformations)
 		self.boton1.grid(column=0, row=10, columnspan=2, padx=5, pady=5, sticky="we")
 		self.entry1.focus()
+
+	def apply_transformations(self):
+		if (self.dato1.get() or self.dato2.get()) != 0:
+			self.translate()
+		if (self.dato3.get() and self.dato4.get()) != 0:
+			self.escale()
+		if (self.dato5.get()) != 0:
+			self.rotate()
+		if (self.dato6.get() or self.dato7.get()) != 0:
+			self.shearing()
+		if (self.dato8.get()) > 0:
+			self.reflexion()
 
 	def create_l(self,p1,p2):
 		self.L=[]
@@ -305,6 +317,7 @@ class Aplicacion:
 		self.casa()
 
 	def reflexion(self):
+		
 		#reflect_x_or_y = true then refleclt x else reflect y
 		self.canvas1.delete(tk.ALL)
 		
@@ -321,14 +334,16 @@ class Aplicacion:
 		m  = self.L_aux.shape
 		aux = np.ones((m[0],1))
 		aux = np.hstack((self.L_aux,aux))
-		if reflect_x_or_y:
+		if reflect_x_or_y == 1:
 			aux1=np.array([[1,0,0],[0,-1,0],[0,0,1]])
-		else:
+		elif reflect_x_or_y == 2:
 			aux1=np.array([[-1,0,0],[0,1,0],[0,0,1]])
-
-		self.L_aux=aux1.dot(np.transpose(aux))
-		self.L_aux = np.transpose(np.delete(self.L_aux,2,0))
 		
+		if reflect_x_or_y <= 2:
+			
+			self.L_aux=aux1.dot(np.transpose(aux))
+			self.L_aux = np.transpose(np.delete(self.L_aux,2,0))
+			
 		self.L_aux=np.add(self.L_aux,self.med_casa)
 		self.med_casa[1] = deepcopy(self.change_origin(self.med_casa[1]))
 		self.points = np.array(self.L_aux).tolist()
