@@ -51,8 +51,8 @@ class Aplicacion:
 		self.lf1=ttk.LabelFrame(self.ventana1,text="Transformaciones 2D")
 		self.lf1.grid(column=1, row=0, sticky="w")
 	   
-		# Transladar #
-		self.label1=ttk.Label(self.lf1, text="Transladar")
+		# Trasladar #
+		self.label1=ttk.Label(self.lf1, text="Trasladar")
 		self.label1.grid(column=0,row=0, padx=5, pady=5)
 
 		self.label1=ttk.Label(self.lf1, text="x")
@@ -99,7 +99,7 @@ class Aplicacion:
 		return self.L
 
 	def bresenham_real_mod(self,p1,p2):
-		x1, y1, x2, y2 = p1[0],p1[1],p2[0],p2[1]
+		x1, y1, x2, y2 = int(p1[0]),int(p1[1]),int(p2[0]),int(p2[1])
 		
 		x = x1
 		y = y1
