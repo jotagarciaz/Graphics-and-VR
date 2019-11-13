@@ -18,18 +18,34 @@ class Aplicacion:
 
 	def casa(self):	
 		
-		
-		self.create_l(self.points[0],self.points[1])
-		self.create_l(self.points[0],self.points[2])
-		self.create_l(self.points[2],self.points[3])
-		self.create_l(self.points[1],self.points[3])
-		self.create_l(self.points[1],self.points[4])
-		self.create_l(self.points[4],self.points[3])
+		group=[]
+		group.append(self.create_l(self.points[0],self.points[1]))
+		group.append(self.create_l(self.points[0],self.points[2]))
+		group.append(self.create_l(self.points[2],self.points[3]))
+		group.append(self.create_l(self.points[1],self.points[3]))
+		group.append(self.create_l(self.points[1],self.points[4]))
+		group.append(self.create_l(self.points[4],self.points[3]))
 		#puerta
-		self.create_l(self.points[5],self.points[8])
-		self.create_l(self.points[6],self.points[7])
-		self.create_l(self.points[7],self.points[8])
-		
+		group.append(self.create_l(self.points[5],self.points[8]))
+		group.append(self.create_l(self.points[6],self.points[7]))
+		group.append(self.create_l(self.points[7],self.points[8]))
+		med = self.median_group(group)
+		self.canvas1.create_line(med[0]-2,med[1],med[0]+2,med[1],width=3,fill="red")
+
+	def median_line(self,l):
+		m = np.median(l, axis = 0)
+		m_x = int(m[0])
+		m_y = int(m[1])
+		return [m_x,m_y]
+	
+	def median_group(self,g):
+		r = []
+		for line in g:
+			r.append(self.median_line(line))
+		m = np.median(r, axis = 0)
+		m_x = int(m[0])
+		m_y = int(m[1])
+		return [m_x,m_y]
 
 	def entradadatos(self):
 		self.lf1=ttk.LabelFrame(self.ventana1,text="Transformaciones 2D")
@@ -80,6 +96,7 @@ class Aplicacion:
 		self.bresenham_real_mod(p1,p2)
 		for p in self.L:
 			self.canvas1.create_line(p[0],p[1],p[0]+1,p[1],fill="gold")
+		return self.L
 
 	def bresenham_real_mod(self,p1,p2):
 		x1, y1, x2, y2 = p1[0],p1[1],p2[0],p2[1]

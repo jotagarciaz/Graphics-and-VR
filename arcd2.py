@@ -165,6 +165,7 @@ class Canvas(arcade.Window):
 		self.first_time_drawing = True
 		self.illegal_action= False
 		self.Draw = None
+		self.med = None
 		# If you have sprite lists, you should create them here,
 		# and set them to None
 
@@ -177,6 +178,7 @@ class Canvas(arcade.Window):
 
 	def setup(self):
 		# Create your sprites and sprite lists here
+		self.med = []
 		self.line_buttons = []
 		self.transformation_buttons = []
 		self.L = []
@@ -230,6 +232,9 @@ class Canvas(arcade.Window):
 							width=800, align="center",
 							anchor_x="center", anchor_y="center",bold=True
 							)
+		
+		if len(self.med) > 0:
+			arcade.draw_point(int(self.med[0]),int(self.med[1]),arcade.color.AIR_FORCE_BLUE,5)
 		if len(self.L) > 0:
 			arcade.draw_points(self.L, arcade.color.YALE_BLUE, 5)              
 		if len(self.Draw) > 0:
@@ -263,10 +268,14 @@ class Canvas(arcade.Window):
 						self.L.clear()
 
 	
+	def translation(self,x,y,media_group = None): 
+		#(0,0) -> (media_group)
+		if media_group is not None:
+			x, y = x - self.L_aux[0][0] + media_group[0], y - self.L_aux[0][1] + media_group[1]
+		else:
+			x = x - self.L_aux[0][0]
+			y = y - self.L_aux[0][1]
 
-	def translation(self,x,y):  
-		x = x-self.L_aux[0][0]
-		y = y-self.L_aux[0][1]
 		self.L_aux=np.asarray(self.L_aux)
 		m  = self.L_aux.shape
 		aux = np.ones((m[0],1))
@@ -276,10 +285,12 @@ class Canvas(arcade.Window):
 		self.L_aux = np.transpose(np.delete(self.L_aux,2,0))
 		self.L_aux=np.array(self.L_aux).tolist() 
 		
+
+	def escale(self,sx,sy,media_group):
 	
-	def escale(self,sx,sy):
 		coordinate_aux = self.L_aux[0]
-		self.translation(0,0)
+		self.translation(0,0,media_group)
+
 		self.L_aux=np.asarray(self.L_aux)
 		m  = self.L_aux.shape
 		aux = np.ones((m[0],1))
@@ -288,11 +299,14 @@ class Canvas(arcade.Window):
 		self.L_aux = aux1.dot(np.transpose(aux))
 		self.L_aux = np.transpose(np.delete(self.L_aux,2,0))
 		self.L_aux = np.array(self.L_aux).tolist()
-		self.translation(coordinate_aux[0],coordinate_aux[1])
 
-	def rotate(self, alpha):
+		self.translation(coordinate_aux[0]+sx*(coordinate_aux[0]-media_group[0]),coordinate_aux[1]+sy*(coordinate_aux[1]-media_group[1]),media_group)
+
+	def rotate(self, alpha,media_group):
 		coordinate_aux = self.L_aux[0]
-		self.translation(0,0)
+
+		self.translation(0,0,media_group)
+		
 		self.L_aux=np.asarray(self.L_aux)
 		m  = self.L_aux.shape
 		aux = np.ones((m[0],1))
@@ -304,11 +318,11 @@ class Canvas(arcade.Window):
 		self.L_aux=aux1.dot(np.transpose(aux))
 		self.L_aux = np.transpose(np.delete(self.L_aux,2,0))
 		self.L_aux=np.array(self.L_aux).tolist()
-		self.translation(coordinate_aux[0],coordinate_aux[1])
+		self.translation(coordinate_aux[0],coordinate_aux[1],media_group)
 
 	def shearing(self,cx,cy):
 		coordinate_aux = self.L_aux[0]
-		self.translation(0,0)
+		#self.translation(0,0)
 		self.L_aux=np.asarray(self.L_aux)
 		m  = self.L_aux.shape
 		aux = np.ones((m[0],1))
@@ -317,12 +331,14 @@ class Canvas(arcade.Window):
 		self.L_aux=aux1.dot(np.transpose(aux))
 		self.L_aux = np.transpose(np.delete(self.L_aux,2,0))
 		self.L_aux=np.array(self.L_aux).tolist()
-		self.translation(coordinate_aux[0],coordinate_aux[1])
+		#self.translation(coordinate_aux[0],coordinate_aux[1])
 
-	def reflexion(self,reflect_x_or_y):
+	def reflexion(self,reflect_x_or_y,media_group):
 		#reflect_x_or_y = true then refleclt x else reflect y
 		coordinate_aux = self.L_aux[0]
-		self.translation(0,0)
+
+		#self.translation(0,0)
+
 		self.L_aux=np.asarray(self.L_aux)
 		m  = self.L_aux.shape
 		aux = np.ones((m[0],1))
@@ -335,7 +351,7 @@ class Canvas(arcade.Window):
 		self.L_aux=aux1.dot(np.transpose(aux))
 		self.L_aux = np.transpose(np.delete(self.L_aux,2,0))
 		self.L_aux=np.array(self.L_aux).tolist()
-		self.translation(coordinate_aux[0],coordinate_aux[1])
+		#self.translation(coordinate_aux[0],coordinate_aux[1])
 
 	def slope_line(self, x1, y1, x2, y2):
 		self.L.clear()
@@ -552,6 +568,22 @@ class Canvas(arcade.Window):
 			x = x+dx_
 			y = y+dy_
 
+	def median_line(self,l):
+		m = np.median(l, axis = 0)
+		m_x = int(m[0])
+		m_y = int(m[1])
+		return [m_x,m_y]
+	
+	def median_group(self,g):
+		r = []
+		for line in g:
+			r.append(self.median_line(line))
+		m = np.median(r, axis = 0)
+		m_x = int(m[0])
+		m_y = int(m[1])
+		return [m_x,m_y]
+			
+
 	def on_mouse_press(self, x, y, button, key_modifiers):
 		"""
 		Called when the user presses a mouse button.
@@ -574,15 +606,41 @@ class Canvas(arcade.Window):
 						#self.translation(10,10)
 						#self.escale(0.5,0.5)
 						#self.rotate(75)
-						self.reflexion(False)
-						button.action_function(self.L_aux[0][0], self.L_aux[0][1],self.L_aux[1][0],self.L_aux[1][1])
+						#self.reflexion(False,media_group)
+						
+						button.action_function(int(self.L_aux[0][0]),int(self.L_aux[0][1]),int(self.L_aux[1][0]),int(self.L_aux[1][1]))
 						self.Draw.append(copy.deepcopy(self.L))
-
-						
-						
-						
-						
 						self.L_aux.clear()
+					
+					if len(self.Draw) == 3:
+						self.Draw_aux = []	
+						min = []
+						max = []
+						while len(self.Draw)>0:
+							l = self.Draw.pop()
+							self.Draw_aux.append(l)
+							min.append(np.amin(l, axis=0))
+							max.append(np.amax(l, axis=0))
+						min = np.amin(min, axis=0)
+						max = np.amax(max, axis=0)
+						media_group = np.add(min,max)/2
+						
+
+						media_group = self.median_group(self.Draw_aux)
+						self.med = media_group
+						self.Draw = self.Draw_aux
+						
+						self.Draw_aux = []	
+						while len(self.Draw)>0:
+							l = self.Draw.pop()
+							self.L_aux = [l[0],l[-1]]
+							self.translation(0,0,media_group)
+							#self.escale(0.5,0.5,media_group)
+							button.action_function(int(self.L_aux[0][0]),int(self.L_aux[0][1]),int(self.L_aux[1][0]),int(self.L_aux[1][1]))
+							self.Draw_aux.append(copy.deepcopy(self.L))
+						
+					
+						self.Draw = self.Draw_aux
 
 			
 		elif check_buttons_click_area(x, y, self.transformation_buttons) == False:
