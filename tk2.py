@@ -8,14 +8,16 @@ class Aplicacion:
 	def __init__(self):
 		self.ventana1=tk.Tk()
 		self.entradadatos()
+
 		self.canvas1=tk.Canvas(self.ventana1, width=1000, height=800, background="black")
 		self.canvas1.grid(column=0, row=0)
-
+		
+		self.translated = False
 		self.points = [[118, 345],[118, 138],[436, 345],[436,138],[268,75],[218,345],[298,345],[298,240],[218,240]]
 		self.med_casa = []
 		self.casa()
 		self.ventana1.mainloop()
-
+		
 	
 	def change_origin(self,y):
 		return self.canvas1.winfo_height() - y
@@ -33,8 +35,10 @@ class Aplicacion:
 		group.append(self.create_l(self.points[5],self.points[8]))
 		group.append(self.create_l(self.points[6],self.points[7]))
 		group.append(self.create_l(self.points[7],self.points[8]))
-		
-		self.med_casa = self.median_group(group)
+		if not self.translated:
+			self.med_casa = self.median_group(group)
+		else:
+			self.translated=False
 		self.canvas1.create_line(self.med_casa[0]-2,self.med_casa[1],self.med_casa[0]+2,self.med_casa[1],width=3,fill="red")
 
 
@@ -330,14 +334,16 @@ class Aplicacion:
 		
 		#reflect_x_or_y = true then refleclt x else reflect y
 		self.canvas1.delete(tk.ALL)
-		
 		reflect_x_or_y = self.dato8.get() 
+		
+		coordinate_aux = self.med_casa
+		
 		
 		if reflect_x_or_y == 3 and self.dato9.get() !=0:
 			self.rotate(self.dato9.get())
 
 		self.med_casa[1] = deepcopy(self.change_origin(self.med_casa[1]))
-		coordinate_aux = self.med_casa
+		
 		for i in range(len(self.points)):
 			self.points[i][1] = self.change_origin(self.points[i][1])
 		self.L_aux=np.asarray(self.points)
@@ -359,12 +365,15 @@ class Aplicacion:
 
 		self.L_aux=np.add(self.L_aux,self.med_casa)
 		self.med_casa[1] = deepcopy(self.change_origin(self.med_casa[1]))
+		
 		self.points = np.array(self.L_aux).tolist()
 		for i in range(len(self.points)):
 			self.points[i][1] = self.change_origin(self.points[i][1])
 		
-		if reflect_x_or_y == 3== 3 and self.dato9.get() !=0:
+		if reflect_x_or_y == 3 and self.dato9.get() !=0:
 			self.rotate(-self.dato9.get())
-
+			self.translated = True
+		
+		
 
 aplicacion1=Aplicacion()
