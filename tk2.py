@@ -37,20 +37,23 @@ class Aplicacion:
 		self.med_casa = self.median_group(group)
 		self.canvas1.create_line(self.med_casa[0]-2,self.med_casa[1],self.med_casa[0]+2,self.med_casa[1],width=3,fill="red")
 
-	def median_line(self,l):
-		m = np.median(l, axis = 0)
-		m_x = int(m[0])
-		m_y = int(m[1])
-		return [m_x,m_y]
-	
+
+	#g = [[[x,y][x,y]],[[x,y],[]]]
 	def median_group(self,g):
 		r = []
 		for line in g:
-			r.append(self.median_line(line))
-		m = np.median(r, axis = 0)
-		m_x = int(m[0])
-		m_y = int(m[1])
-		return [m_x,m_y]
+			m = np.amin(line, axis = 0)
+			mm = np.amax(line, axis = 0)
+			m_x = int(m[0])
+			m_y = int(m[1])
+			mm_x = int(mm[0])
+			mm_y = int(mm[1])
+			r.append([m_x,m_y])
+			r.append([mm_x,mm_y])
+		m = np.amin(r, axis = 0)
+		mm = np.amax(r, axis = 0)
+		
+		return [(mm[0]+m[0])/2,(mm[1]+m[1])/2]
 
 	def entradadatos(self):
 		self.lf1=ttk.LabelFrame(self.ventana1,text="Transformaciones 2D")
@@ -291,7 +294,7 @@ class Aplicacion:
 		self.points = np.array(self.L_aux).tolist()
 		for i in range(len(self.points)):
 			self.points[i][1] = self.change_origin(self.points[i][1])
-		
+		self.med_casa = coordinate_aux
 		#self.translation(coordinate_aux[0],coordinate_aux[1])
 
 	def shearing(self):
