@@ -12,7 +12,7 @@ class Aplicacion:
 		self.canvas1=tk.Canvas(self.ventana1, width=1000, height=800, background="black")
 		self.canvas1.grid(column=0, row=0)
 		
-		self.translated = False
+		self.translated_or_rotated = False
 		self.points = [[118, 345],[118, 138],[436, 345],[436,138],[268,75],[218,345],[298,345],[298,240],[218,240]]
 		self.med_casa = []
 		self.casa()
@@ -35,10 +35,11 @@ class Aplicacion:
 		group.append(self.create_l(self.points[5],self.points[8]))
 		group.append(self.create_l(self.points[6],self.points[7]))
 		group.append(self.create_l(self.points[7],self.points[8]))
-		if not self.translated:
+		if not self.translated_or_rotated:
 			self.med_casa = self.median_group(group)
 		else:
-			self.translated=False
+			
+			self.translated_or_rotated=False
 		self.canvas1.create_line(self.med_casa[0]-2,self.med_casa[1],self.med_casa[0]+2,self.med_casa[1],width=3,fill="red")
 
 
@@ -298,7 +299,7 @@ class Aplicacion:
 		self.points = np.array(self.L_aux).tolist()
 		for i in range(len(self.points)):
 			self.points[i][1] = self.change_origin(self.points[i][1])
-		self.med_casa = coordinate_aux
+		self.translated_or_rotated = True
 		#self.translation(coordinate_aux[0],coordinate_aux[1])
 
 	def shearing(self):
@@ -336,8 +337,7 @@ class Aplicacion:
 		self.canvas1.delete(tk.ALL)
 		reflect_x_or_y = self.dato8.get() 
 		
-		coordinate_aux = self.med_casa
-		
+		 
 		
 		if reflect_x_or_y == 3 and self.dato9.get() !=0:
 			self.rotate(self.dato9.get())
@@ -353,6 +353,7 @@ class Aplicacion:
 		m  = self.L_aux.shape
 		aux = np.ones((m[0],1))
 		aux = np.hstack((self.L_aux,aux))
+		
 		if reflect_x_or_y == 1 or reflect_x_or_y == 3:
 			aux1=np.array([[1,0,0],[0,-1,0],[0,0,1]])
 		elif reflect_x_or_y == 2:
@@ -372,7 +373,7 @@ class Aplicacion:
 		
 		if reflect_x_or_y == 3 and self.dato9.get() !=0:
 			self.rotate(-self.dato9.get())
-			self.translated = True
+			self.translated_or_rotated = True
 		
 		
 
