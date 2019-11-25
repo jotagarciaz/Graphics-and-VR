@@ -173,6 +173,8 @@ class Aplicacion:
 		#self.coronel_sanders_list,self.med_coronel_sanders = self.escale(self.coronel_sanders_list,self.med_coronel_sanders,0.8,0.8)
 		#self.chicken_1_list,self.med_chicken = self.escale(self.chicken_1_list,self.med_chicken_1,0.8,0.8)
 
+		#print(self.all_points)
+		
 		for i in range(0,8):
 			
 			time.sleep(0.1)
@@ -188,9 +190,11 @@ class Aplicacion:
 			
 
 			#self.chicken_1_list=self.rotate(self.chicken_1_list,45)
-			self.all_points = self.escale(self.all_points,self.med_all,0.9,0.9)
+			#self.all_points = self.escale(self.all_points,self.med_all,0.99,0.99)
+			#self.bucket_list = self.escale(self.bucket_list,self.med_bucket,0.9,0.9)
 
-			#self.bucket()
+			self.all_points = self.translate(self.all_points,self.med_all,20,0)			
+			self.all_groups()
 			#self.letters()
 			#self.coronel_sanders()
 			#self.chicken1()
@@ -326,7 +330,8 @@ class Aplicacion:
 		self.L_aux = np.transpose(np.delete(self.L_aux,2,0))
 		self.L_aux=np.add(self.L_aux,med_group)
 		group = np.array(self.L_aux).tolist()
-		return group,med_group
+		
+		return group
 		#self.translate(coordinate_aux[0],coordinate_aux[1])
 		
 		

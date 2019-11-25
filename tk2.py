@@ -256,7 +256,7 @@ class Aplicacion:
 		coordinate_aux = self.med_casa
 		#self.translate(0,0)
 		self.L_aux=np.asarray(self.points)
-		
+		print(self.L_aux)
 		self.L_aux=np.subtract(self.L_aux,self.med_casa)
 		m  = self.L_aux.shape
 		aux = np.ones((m[0],1))
