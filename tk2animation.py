@@ -198,11 +198,11 @@ class Aplicacion:
 		self.all_points=self.translate(self.all_points,800,0)
 		self.all_points = self.shearing(self.all_points,self.med_all,-0.2,0)
 		
-		pygame.mixer.music.load("carspeed.wav")
+		pygame.mixer.music.load("carspeed.wav") #yelling
 		pygame.mixer.music.play()
 
 		for i in range(0,8):
-			time.sleep(0.0001)
+			time.sleep(0.01)
 			self.all_points = self.escale(self.all_points,self.med_all,1.02,1.02)
 			self.all_points=self.translate(self.all_points,-100,0)
 			#self.all_points = self.shearing(self.all_points,self.med_all,0.025,0)
@@ -212,28 +212,81 @@ class Aplicacion:
 		pygame.mixer.music.stop()
 		self.all_points = self.shearing(self.all_points,self.med_all,0.2,0)
 		self.all_groups()
+		
+
+		self.canvas1.update()
+
+		pygame.mixer.music.load("bounce.wav") 
+		pygame.mixer.music.play()
+		time.sleep(0.1)
+		self.all_points = self.rotate(self.all_points,self.med_all,-20)	
+		self.all_groups()
+		self.canvas1.update()
+		pygame.mixer.music.stop()
+		time.sleep(0.2)
+		pygame.mixer.music.load("bounce.wav") 
+		pygame.mixer.music.play()
+		self.all_points = self.rotate(self.all_points,self.med_all, 20)	
+		self.all_groups()
+		self.canvas1.update()
+		pygame.mixer.music.stop()
+		time.sleep(0.2)
+		pygame.mixer.music.load("bounce.wav") 
+		pygame.mixer.music.play()
+		self.all_points = self.rotate(self.all_points,self.med_all, 40)	
+		self.all_groups()
+		pygame.mixer.music.stop()
+		self.canvas1.update()
+		time.sleep(0.2)
+		pygame.mixer.music.load("bounce.wav") 
+		pygame.mixer.music.play()
+		self.all_points = self.rotate(self.all_points,self.med_all,-60)	
+		self.all_groups()
+		self.canvas1.update()
+		pygame.mixer.music.stop()
+
+		self.all_groups()
+		time.sleep(1)
+
+		pygame.mixer.music.load("sad.wav") #crying
+		pygame.mixer.music.play()
+		#pygame.mixer.music.load("carspeed.wav") #falling
+		#pygame.mixer.music.play()
 		for i in range(0,4):
-			time.sleep(0.0001)
+			time.sleep(0.01)
 			self.all_points = self.rotate(self.all_points,self.med_all,-20)	
 			self.all_groups()
 			self.canvas1.update()
+		#pygame.mixer.music.stop()
 		
+		pygame.mixer.music.load("jab.wav") #crying
+		pygame.mixer.music.play()
 		
 		self.all_points = self.rotate(self.all_points,self.med_all,-20)	
 		self.chicken_1_list.clear()
 		
 		self.all_groups()
+		self.canvas1.update()
+		pygame.mixer.music.stop()
+		
+		pygame.mixer.music.load("sad.wav") #crying
+		pygame.mixer.music.play()
 
+		time.sleep(0.6)
+
+		
+		
 		self.lagrima()
 		self.update_lagrima()
 		for i in range(0,10):
+			time.sleep(0.01)
 			self.lagrima_list=self.translate(self.lagrima_list,0,25)
 			self.lagrima_list = self.escale(self.lagrima_list,self.med_lagrima,1.002,1.05)
 			self.lagrima()
 			self.all_groups()
 			self.canvas1.update()
 		self.lagrima()
-		
+		pygame.mixer.music.stop()
 
 		self.canvas1.update()
 
