@@ -4,6 +4,7 @@ import numpy as np
 import math 
 from copy import deepcopy 
 import time
+from winsound import *
 
 class Aplicacion:
 	def __init__(self):
@@ -21,7 +22,7 @@ class Aplicacion:
 		
 								#Pollo1																															#Pollo4																												#Pollo3	mal																Pollo2
 		self.chicken_1_list = [[295,220],[297,207],[298,198],[300,195],[300,190],[325,170],[330,168],[342,168],[344,172],[358,170],[358,177],[374,181],     [376,164],[375,183],[375,165],[392,148],[396,146],[410,145],[410,146],[418,152],[430,145],[450,146],[461,155],           [449,157],[435,156],[431,156], [418,162],[380,200],[375,219], 	      [375,220],[385,220],[395,202],[405,191],[425,189],[432,190],[449,205], [448,217],[444,221]      ,           [432,189],[475,140],[503,135],[545,145],[557,157],[573,180],   [485,222],[488,215],[510,196],[584,180],[587,183],[595,183],[600,175],[612,177],[623,190],[619,206],[600,221],   	[616,175],[640,153],[658,152],[675,169],[678,175],[677,188],[662,201],[659,212],[654,221]]							
-																																										#Pollo5																#Pollo6																												#Pollo7
+		self.lagrima_list = [self.coronel_sanders_list[85],	[self.coronel_sanders_list[85][0]+3,self.coronel_sanders_list[85][1]+5]]																																						#Pollo5																#Pollo6																												#Pollo7
 																																					 																													#principio ->						<-							
 		self.all_points.extend(self.bucket_list)         
 		self.all_points.extend(self.letters_list) 
@@ -33,6 +34,7 @@ class Aplicacion:
 		self.med_coronel_sanders = []
 		self.med_chicken_1 = []
 		self.med_all = []
+		self.med_lagrima = []
 
 		#self.bucket()
 		self.all_groups()
@@ -66,8 +68,9 @@ class Aplicacion:
 
 		divisions_low = divisions_top
 		divisions_top += len(self.chicken_1_list)
-		self.chicken_1_list = self.all_points[divisions_low:divisions_top]
-		self.chicken1()
+		if self.chicken_1_list:
+			self.chicken_1_list = self.all_points[divisions_low:divisions_top]
+			self.chicken1()
 
 		
 		if not self.reflected_or_rotated:
@@ -101,8 +104,8 @@ class Aplicacion:
 		group_bucket.append(self.create_l(self.bucket_list[0],self.bucket_list[7]))
 
 		
-		group_bucket.append(self.create_l(self.bucket_list[7],self.bucket_list[21],color="red",width=15))
-		group_bucket.append(self.create_l(self.bucket_list[6],self.bucket_list[22],color="red",width=15))
+		group_bucket.append(self.create_l(self.bucket_list[7],self.bucket_list[21],color="red",width=2))
+		group_bucket.append(self.create_l(self.bucket_list[6],self.bucket_list[22],color="red",width=2))
 		group_bucket.append(self.create_l(self.bucket_list[7],self.bucket_list[8],color="red",width=2))
 		group_bucket.append(self.create_l(self.bucket_list[8],self.bucket_list[9]))
 		group_bucket.append(self.create_l(self.bucket_list[6],self.bucket_list[9],color="red",width=2))
@@ -142,6 +145,19 @@ class Aplicacion:
 		else:
 			self.reflected_or_rotated=False
 
+	def update_lagrima(self):
+		self.lagrima_list = [self.coronel_sanders_list[85],	[self.coronel_sanders_list[85][0]+3,self.coronel_sanders_list[85][1]+5]]
+		
+	def lagrima(self):
+		group_lagrima = []
+		
+		group_lagrima.append(self.create_l(self.lagrima_list[0],self.lagrima_list[1],color="blue",width=8))
+
+		if not self.reflected_or_rotated:
+			self.med_lagrima = self.median_group(group_lagrima)
+		else:
+			self.reflected_or_rotated=False		
+
 	def coronel_sanders(self):
 		group_coronel_sanders = []	
 		for i in range(0,55):
@@ -157,6 +173,8 @@ class Aplicacion:
 		for i in range(85,103):
 			 group_coronel_sanders.append(self.create_l(self.coronel_sanders_list[i],self.coronel_sanders_list[i+1],color="black",width=8))
 
+		
+		#print(self.coronel_sanders_list[85],self.coronel_sanders_list[103])
 
 		if not self.reflected_or_rotated:
 			self.med_coronel_sanders = self.median_group(group_coronel_sanders)
@@ -175,9 +193,45 @@ class Aplicacion:
 
 		#print(self.all_points)
 		
+		self.all_points = self.escale(self.all_points,self.med_all,0.875,0.875)
+		self.all_points=self.translate(self.all_points,800,0)
+		self.all_points = self.shearing(self.all_points,self.med_all,-0.2,0)
+		
 		for i in range(0,8):
-			
-			time.sleep(0.1)
+			time.sleep(0.0001)
+			self.all_points = self.escale(self.all_points,self.med_all,1.02,1.02)
+			self.all_points=self.translate(self.all_points,-100,0)
+			#self.all_points = self.shearing(self.all_points,self.med_all,0.025,0)
+			self.all_groups()
+			self.canvas1.update()
+
+		self.all_points = self.shearing(self.all_points,self.med_all,0.2,0)
+		self.all_groups()
+		for i in range(0,4):
+			time.sleep(0.0001)
+			self.all_points = self.rotate(self.all_points,self.med_all,-20)	
+			self.all_groups()
+			self.canvas1.update()
+		
+		
+		self.all_points = self.rotate(self.all_points,self.med_all,-20)	
+		self.chicken_1_list.clear()
+		
+		self.all_groups()
+
+		self.lagrima()
+		self.update_lagrima()
+		for i in range(0,10):
+			self.lagrima_list=self.translate(self.lagrima_list,0,25)
+			self.lagrima_list = self.escale(self.lagrima_list,self.med_lagrima,1.002,1.05)
+			self.lagrima()
+			self.all_groups()
+			self.canvas1.update()
+		self.lagrima()
+		
+
+		self.canvas1.update()
+
 			#self.bucket_list=self.translate(self.bucket_list,-20)
 			#self.shearing(self.bucket_list,0.5,0.1)
 			#self.bucket_list=self.rotate(self.bucket_list,45)
@@ -193,12 +247,15 @@ class Aplicacion:
 			#self.all_points = self.escale(self.all_points,self.med_all,0.99,0.99)
 			#self.bucket_list = self.escale(self.bucket_list,self.med_bucket,0.9,0.9)
 
-			self.all_points = self.translate(self.all_points,self.med_all,20,0)			
-			self.all_groups()
+			#self.all_points = self.translate(self.all_points,20,0)		
+			#self.all_points = self.rotate(self.all_points,self.med_all,10)	
+			#self.all_points = self.shearing(self.all_points,self.med_all,0.9,0)
+			#self.all_points = self.reflexion(self.all_points,self.med_all,1)
+			
 			#self.letters()
 			#self.coronel_sanders()
 			#self.chicken1()
-			self.canvas1.update()
+			
 				
 	
 	def median_all_groups(self,g):
@@ -366,7 +423,7 @@ class Aplicacion:
 			group[i][1] = self.change_origin(group[i][1])
 		self.reflected_or_rotated = True
 		#self.translation(coordinate_aux[0],coordinate_aux[1])
-		return group,med_group
+		return group
 
 	def shearing(self, group,med_group ,cx = 0 ,cy = 0):
 		self.canvas1.delete(tk.ALL)
@@ -391,7 +448,7 @@ class Aplicacion:
 		group = np.array(self.L_aux).tolist()
 		for i in range(len(group)):
 			group[i][1] = self.change_origin(group[i][1])
-		return group,med_group
+		return group
 
 	def reflexion(self,group,med_group ,reflexion_type = 1,rotate_degrees = None):
 		
@@ -434,6 +491,7 @@ class Aplicacion:
 			self.rotate(-rotate_degrees)
 			self.reflected_or_rotated = True
 		
+		return group
 		
 
 aplicacion1=Aplicacion()
