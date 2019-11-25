@@ -4,12 +4,13 @@ import numpy as np
 import math 
 from copy import deepcopy 
 import time
-from winsound import *
+import pygame
+
 
 class Aplicacion:
 	def __init__(self):
 		self.ventana1=tk.Tk()
-
+		pygame.init()
 		self.canvas1=tk.Canvas(self.ventana1, width=1000, height=800, background="gray99")
 		self.canvas1.grid(column=0, row=0)
 		self.reflected_or_rotated = False
@@ -197,6 +198,9 @@ class Aplicacion:
 		self.all_points=self.translate(self.all_points,800,0)
 		self.all_points = self.shearing(self.all_points,self.med_all,-0.2,0)
 		
+		pygame.mixer.music.load("carspeed.wav")
+		pygame.mixer.music.play()
+
 		for i in range(0,8):
 			time.sleep(0.0001)
 			self.all_points = self.escale(self.all_points,self.med_all,1.02,1.02)
@@ -205,6 +209,7 @@ class Aplicacion:
 			self.all_groups()
 			self.canvas1.update()
 
+		pygame.mixer.music.stop()
 		self.all_points = self.shearing(self.all_points,self.med_all,0.2,0)
 		self.all_groups()
 		for i in range(0,4):
