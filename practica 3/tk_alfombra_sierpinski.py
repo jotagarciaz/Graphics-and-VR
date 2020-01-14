@@ -35,48 +35,45 @@ class MainWindow(tk.Tk):
 
         level = int(self.level.get())
 
-        x1 = self.margin + 0 
-        y1 = self.margin + self.height
-        x2 = self.margin + 0
-        y2 = self.margin + 0
+        x1 = self.margin 
+        y1 = self.margin
+        x2 = self.width - self.margin 
+        y2 = self.height - self.margin  
 
-        x3 = self.margin + self.width
-        y3 = self.margin + 0
-        x4 = self.margin + self.width
-        y4 = self.margin + self.height
+    
         
-        self.recursion(level, x1, y1, x2, y2, x3, y3,x4,y4)
+        self.recursion(level, x1, y1, x2, y2)
 
-    def recursion(self, level, x1, y1, x2, y2, x3, y3,x4,y4):
-        print("level:", level)
+    def recursion(self, level, x1, y1, x2, y2):
 
-        if level <= 1:
-            #print("   draw element")
-            self.canvas.create_line(x1, y1, x2, y2)
-            self.canvas.create_line(x2, y2, x3, y3)
-            self.canvas.create_line(x3, y3, x4, y4)
-            self.canvas.create_line(x4, y4, x1, y1)
-            print("x1: ",x1,y1," x2: ",x2,y2," x3: ",x3,y3," x4: ",x4,y4)
+        if level < 1:
+            self.canvas.create_rectangle(x1,y1,x2,y2)
+
         else:
-            #print("   recursion")
-            level = level - 1
+            level -=1
+            x_0 = x1
+            y_0 = y1
+            
+            x_02 = x2
+            y_02 = y2
+            
+            x_1 = (x2/3) + ((x1/3)*2)
+            y_1 = (y1/3) + ((y2/3)*2)
 
-            middle_x1 = (x1 + x2)/3
-            middle_y1 = (y1 + y2)/3
+            x_2 = ((x2/3)*2) + (x1/3)
+            y_2 = ((y1/3)*2) + (y2/3)
 
-            middle_x2 = (x2 + x3)/3
-            middle_y2 = (y2 + y3)/3
 
-            middle_x3 = (x3 + x1)/3
-            middle_y3 = (y3 + y1)/3
 
-            middle_x4 = (x3 + x1)/3
-            middle_y4 = (y3 + y1)/3
 
-            self.recursion(level, x1, y1, middle_x1, middle_y1, middle_x3, middle_y3,middle_x4,middle_y4)
-            self.recursion(level, middle_x1, middle_y1, x2, y2, middle_x2, middle_y2,middle_x4,middle_y4)
-            self.recursion(level, middle_x3, middle_y3, middle_x2, middle_y2, x3, y3, middle_x4,middle_y4)
-            #self.recursion(level, middle_x3, middle_y3, middle_x2, middle_y2, middle_x3, middle_y3, middle_x4,middle_y4)
+            self.recursion(level , x_0,y_0,x_1,y_2)
+            self.recursion(level , x_1, y_0,x_2, y_2)
+            self.recursion(level , x_2, y_0,x_02, y_2)
+            self.recursion(level , x_0, y_2,x_1, y_1)
+            self.recursion(level , x_2, y_2,x_02, y_1)
+            self.recursion(level , x_0, y_1,x_1, y_02)
+            self.recursion(level , x_1, y_1,x_2, y_02)
+            self.recursion(level , x_2, y_1,x_02,y_02)
 
 # create and start main window
 MainWindow()

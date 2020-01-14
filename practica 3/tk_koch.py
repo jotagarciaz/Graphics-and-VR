@@ -1,36 +1,7 @@
-import math
+#editar, original en https://stackoverflow.com/questions/33970499/python-tkinter-coding-a-sierpinski-triangle-in-an-objective-orientated-method
+
 import tkinter as tk
-
-angles = [math.radians(60*x) for x in range(6)]
-sines = [math.sin(x) for x in angles]
-cosin = [math.cos(x) for x in angles]
-
-def L(angle, coords, jump):
-    return (angle + 1) % 6
-def R(angle, coords, jump):
-    return (angle + 4) % 6
-def F(angle, coords, jump):
-    coords.append(
-        (coords[-1][0] + jump * cosin[angle],
-         coords[-1][1] + jump * sines[angle]))
-    return angle
-
-decode = dict(L=L, R=R, F=F)
-
-def koch(steps, length=200, startPos=(0,0)):
-    pathcodes="F"
-    for i in range(steps):
-        pathcodes = pathcodes.replace("F", "FLFRFLF")
-
-    jump = float(length) / (3 ** steps)
-    coords = [startPos]
-    angle = 0
-
-    for move in pathcodes:
-        angle = decode[move](angle, coords, jump)
-
-    return coords
-
+import math
 
 class MainWindow(tk.Tk):
 
@@ -59,13 +30,40 @@ class MainWindow(tk.Tk):
         self.mainloop()        
 
     def draw(self):
+        # clear canvas
+        self.canvas.delete("all")
+
         level = int(self.level.get())
 
-        points = koch(level,TOTALWIDTH,(-TOTALWIDTH/2,0))
+      
+        x1 = self.margin + 0 
+        y1 = self.margin + self.height
+        x4 = self.margin + self.width/2
+        y4 = self.margin + 0
+        
+        self.recursion(level, x1, y1, x4,y4)
 
-        for i in range(0,len(points)-1):
-            self.canvas.create_line(points[i], points[i+1])
+    def recursion(self, level, x1, y1,x4,y4):
 
+        if level <= 1:
+            
+            self.canvas.create_line(x1, y1, x4, y4)
 
-TOTALWIDTH = 1000
+        else:
+            level = level - 1
+            Dx = (x4 - x1) / 3
+            Dy = (y4 - y1) / 3
+            x2 = x1 + Dx
+            y2 = y1 + Dy
+            x3 = x2 + Dx
+            y3 = y2 + Dy
+            x = (Dx - math.sqrt(3) * Dy)/2 + (x1 + Dx)
+            y = (math.sqrt(3) * Dx + Dy)/2 + (y1 + Dy)
+
+            self.recursion(level,x1, y1, x2, y2)
+            self.recursion(level, x2, y2, x, y)
+            self.recursion(level,x, y, x3, y3 )
+            self.recursion(level,x3, y3, x4, y4 )
+
+# create and start main window
 MainWindow()

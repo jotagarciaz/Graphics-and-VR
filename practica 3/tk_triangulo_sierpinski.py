@@ -49,9 +49,9 @@ class MainWindow(tk.Tk):
 
         if level <= 1:
             #print("   draw element")
-            self.canvas.create_line(x1, y1, x2, y2)
-            self.canvas.create_line(x2, y2, x3, y3)
-            self.canvas.create_line(x3, y3, x1, y1)
+            self.canvas.create_line(x1, y1, x2, y2,fill="red")
+            self.canvas.create_line(x2, y2, x3, y3,fill="blue")
+            self.canvas.create_line(x3, y3, x1, y1,fill="green")
         else:
             #print("   recursion")
             level = level - 1
