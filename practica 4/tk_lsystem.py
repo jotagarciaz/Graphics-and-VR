@@ -45,54 +45,59 @@ class Aplicacion(tk.Tk):
 		self.label3.grid(column=2,row=0, padx=5, pady=5)
 		self.iterations=tk.IntVar()
 		self.iterations=ttk.Entry(self.lf1, textvariable=self.iterations, width=3, justify=tk.CENTER)
+		self.iterations.insert(tk.INSERT,"0")
 		self.iterations.grid(column=2, row=1, padx=5, pady=5)
 
 		self.label4 = ttk.Label(self.lf1, text="Step size:")
 		self.label4.grid(column=3,row=0, padx=5, pady=5)
 		self.step=tk.IntVar()
 		self.step=ttk.Entry(self.lf1, textvariable=self.step, width=3, justify=tk.CENTER)
+		self.step.insert(tk.INSERT,"0")
 		self.step.grid(column=3, row=1, padx=5, pady=5)
 
 		self.label5 = ttk.Label(self.lf1, text="Initial heading (alpha-0):")
 		self.label5.grid(column=4,row=0, padx=5, pady=5)
-		self.alpha=tk.IntVar()
+		self.alpha=tk.DoubleVar()
 		self.alpha=ttk.Entry(self.lf1, textvariable=self.alpha, width=3, justify=tk.CENTER)
+		self.alpha.insert(tk.INSERT,"0")
 		self.alpha.grid(column=4, row=1, padx=5, pady=5)
 
 		self.label6 = ttk.Label(self.lf1, text="Angle increment (i):")
 		self.label6.grid(column=5,row=0, padx=5, pady=5)
-		self.increment=tk.IntVar()
+
+		self.increment=tk.DoubleVar()
 		self.increment=ttk.Entry(self.lf1, textvariable=self.increment, width=3, justify=tk.CENTER)
+		self.increment.insert(tk.INSERT,"0")
 		self.increment.grid(column=5, row=1, padx=5, pady=5)
 
 		self.boton2=ttk.Button(self.lf1, text="Create L-System", command=self.draw)
 		self.boton2.grid(column=0, row=4, columnspan=3, padx=5, pady=5, sticky="we")
 
+	def add_rule(self):
+
+		rule = self.rule.get()
+		key, value = rule.split("->")
+		SYSTEM_RULES[key] = value
+		self.rule.delete(0,tk.END)
+
 	def draw(self):
 		self.canvas1.delete("all")
-		if self.dato.get() == 1:
-			level = int(self.level.get())
-			x1 = self.margin + 0 
-			y1 = self.margin + self.height
-			x2 = self.margin + self.width/2
-			y2 = self.margin + 0
-			x3 = self.margin + self.width
-			y3 = self.margin + self.height
-			self.sierp_triangle(level, x1, y1, x2, y2, x3, y3)
-		elif self.dato.get() == 2:
-			level = int(self.level.get())
-			x1 = self.margin 
-			y1 = self.margin
-			x2 = self.width - self.margin 
-			y2 = self.height - self.margin  
-			self.sierp_carpet(level, x1, y1, x2, y2)
-		elif self.dato.get() == 3:
-			level = int(self.level.get())
-			x1 = self.margin + 0 
-			y1 = self.margin + self.height
-			x4 = self.margin + self.width/2
-			y4 = self.margin + 0
-			self.koch_curve(level, x1, y1, x4, y4)
+
+		axiom = self.axiom.get()
+		iterations = int(self.iterations.get())
+
+		model = derivation(axiom, iterations)  
+
+		segment_length = int(self.step.get())
+		alpha_zero = float(self.alpha.get())
+		angle = float(self.increment.get())
+
+	
+		r_turtle = set_turtle(self.canvas1,alpha_zero)  
+
+		draw_l_system(r_turtle, model[-1], segment_length, angle)  
+		
+		
 
 SYSTEM_RULES = {}
 
@@ -133,40 +138,14 @@ def draw_l_system(turtle, SYSTEM_RULES, seg_length, angle):
 			turtle.setheading(heading)
 
 
-def set_turtle(alpha_zero):
-	r_turtle = turtle.Turtle()  
-	r_turtle.screen.title("L-System Derivation")
+def set_turtle(canvas,alpha_zero):
+	r_turtle = turtle.RawTurtle(canvas)  
 	r_turtle.speed(0)  # (0 = más rápido)
 	r_turtle.setheading(alpha_zero)  
 	return r_turtle
 
 
-def main():
-	rule_num = 1
-	while True:
-		rule = input("Enter rule[%d]:rewrite term (0 when done): " % rule_num)
-		if rule == '0':
-			break
-		key, value = rule.split("->")
-		SYSTEM_RULES[key] = value
-		rule_num += 1
-
-	axiom = input("Enter axiom (w): ")
-	iterations = int(input("Enter number of iterations (n): "))
-
-	model = derivation(axiom, iterations)  
-
-	segment_length = int(input("Enter step size (segment length): "))
-	alpha_zero = float(input("Enter initial heading (alpha-0): "))
-	angle = float(input("Enter angle increment (i): "))
-
-   
-	r_turtle = set_turtle(alpha_zero)  
-	turtle_screen = turtle.Screen()  
-	turtle_screen.screensize(1500, 1500)
-	draw_l_system(r_turtle, model[-1], segment_length, angle)  
-	turtle_screen.exitonclick()
 
 
-if __name__ == "__main__":
-	main()
+
+aplicacion1=Aplicacion()
