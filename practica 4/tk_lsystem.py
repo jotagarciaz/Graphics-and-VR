@@ -1,4 +1,3 @@
-#https://github.com/ambron60/l-system-drawing/edit/master/lsystem.py
 import turtle
 import tkinter as tk
 from tkinter import ttk
