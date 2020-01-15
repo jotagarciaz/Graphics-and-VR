@@ -4,7 +4,7 @@ from tkinter import PhotoImage
 import numpy as np
 import copy
 import math
-from PIL import Image, ImageTk
+#from PIL import Image, ImageTk
 import random
 
 class Aplicacion(tk.Tk):
@@ -274,7 +274,11 @@ class Aplicacion(tk.Tk):
 		ya = -1.5; yb = 1.5
 		maxIt = 256
 
+		
+		canvas = tk.Canvas(self.ventana1, width = self.width, height = self.height, bg = "#000000")
+		canvas.grid(column=0,row=1)
 		img = PhotoImage(width = self.width, height = self.height)
+		canvas.create_image((0, 0), image = img, state = "normal", anchor = tk.NW)
 
 		for ky in range(self.height): #si haces hilos de Ky, cada hilo hace kx, lo que lo optimiza bastante
 			for kx in range(self.width):
@@ -288,7 +292,7 @@ class Aplicacion(tk.Tk):
 			gr = hex(i % 8 * 32)[2:].zfill(2)
 			bl = hex(i % 16 * 16)[2:].zfill(2)
 			img.put("#" + rd + gr + bl, (kx, ky))
-		self.canvas1.create_image((positionx, positiony), image = img, state = "normal", anchor = tk.NW)
-		self.images.append(img)
+		canvas.pack()
+		#self.images.append(img)
 
 aplicacion1=Aplicacion()
