@@ -1,5 +1,7 @@
 # Mandelbrot Fractal using Tkinter
 # FB36 - 20130706
+
+#
 import tkinter
 from tkinter import *
 WIDTH = 640; HEIGHT = 480
@@ -15,7 +17,7 @@ canvas.create_image((0, 0), image = img, state = "normal", anchor = tkinter.NW)
 for ky in range(HEIGHT): #si haces hilos de Ky, cada hilo hace kx, lo que lo optimiza bastante
     for kx in range(WIDTH):
         c = complex(xa + (xb - xa) * kx / WIDTH, ya + (yb - ya) * ky / HEIGHT)
-        z = complex(0.0 , 0.0)
+        z = complex( -0.7269, 0.1889)
         for i in range(maxIt):
             z = z * z + c
             if abs(z) >= 2.0:
