@@ -158,8 +158,9 @@ class Aplicacion(tk.Tk):
 			positiony = self.margin + self.height/2
 			self.ifs(matrix, positionx, positiony)
 		elif self.dato.get() == 6:
+			positionx = self.margin + self.width/2
 			positiony = self.margin + self.height/2
-			self.mandelbrot_set(0, positiony)
+			self.mandelbrot_set(positionx, positiony)
 
 	def sierp_triangle(self, level, x1, y1, x2, y2, x3, y3):
 		if level <= 1:
@@ -271,7 +272,7 @@ class Aplicacion(tk.Tk):
 		maxIt = 256
 
 		img = PhotoImage(width = self.width+self.margin, height = self.height+self.margin)
-
+		self.canvas1.create_image(positionx, positiony, image = img)
 		for ky in range(self.height): #si haces hilos de Ky, cada hilo hace kx, lo que lo optimiza bastante
 			for kx in range(self.width):
 				c = complex(xa + (xb - xa) * kx / self.width, ya + (yb - ya) * ky / self.height)
@@ -280,11 +281,11 @@ class Aplicacion(tk.Tk):
 					z = z * z + c
 					if abs(z) >= 2.0:
 						break
-			rd = hex(i % 4 * 64)[2:].zfill(2)
-			gr = hex(i % 8 * 32)[2:].zfill(2)
-			bl = hex(i % 16 * 16)[2:].zfill(2)
-			img.put("#" + rd + gr + bl, (kx, ky))
-		self.canvas1.create_image(positionx, positiony, image = img)
+				rd = hex(i % 4 * 64)[2:].zfill(2)
+				gr = hex(i % 8 * 32)[2:].zfill(2)
+				bl = hex(i % 16 * 16)[2:].zfill(2)
+				img.put("#" + rd + gr + bl, (kx, ky))
+		self.canvas1.update()
 		self.images.append(img)
 
 aplicacion1=Aplicacion()
