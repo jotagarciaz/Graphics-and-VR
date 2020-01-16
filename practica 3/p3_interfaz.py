@@ -11,7 +11,7 @@ class Aplicacion(tk.Tk):
 	def __init__(self):
 		self.ventana1=tk.Tk()
 		self.height = 480
-		self.width = 610
+		self.width = 640
 		self.margin = 20
 		self.fern_matrix = [[0.0,0.0,0.0,0.16,0.0,0.0,0.01],
 							[0.85,0.04,-0.04,0.85,0.0,1.6,0.85],
@@ -158,9 +158,8 @@ class Aplicacion(tk.Tk):
 			positiony = self.margin + self.height/2
 			self.ifs(matrix, positionx, positiony)
 		elif self.dato.get() == 6:
-			positionx = self.margin + self.width/2
 			positiony = self.margin + self.height/2
-			self.mandelbrot_set(positionx, positiony)
+			self.mandelbrot_set(0, positiony)
 
 	def sierp_triangle(self, level, x1, y1, x2, y2, x3, y3):
 		if level <= 1:
@@ -246,7 +245,8 @@ class Aplicacion(tk.Tk):
 				ya = y
 			if y > yb:
 				yb = y
-		image = Image.new("L", (imgx, imgy), 255)
+		image = PhotoImage(width = imgx, height = imgy)
+		self.canvas1.create_image(positionx, positiony, image=image)
 		x=0.0
 		y=0.0 
 		for k in range(imgx * imgy):
@@ -261,24 +261,16 @@ class Aplicacion(tk.Tk):
 			x = x0 
 			jx = int((x - xa) / (xb - xa) * (imgx - 1)) 
 			jy = (imgy - 1) - int((y - ya) / (yb - ya) * (imgy - 1))
-			image.putpixel((jx, jy), 0)
-
-		if self.dato.get() == 4:
-			image.save("fern.png", "PNG")
-		photo = ImageTk.PhotoImage(image)
-		self.canvas1.create_image(positionx, positiony, image=photo)
-		self.images.append(photo)
+			image.put('black', (jx, jy))
+			self.canvas1.update()
+		self.images.append(image)
 
 	def mandelbrot_set(self, positionx, positiony):
 		xa = -2.0; xb = 1.0
 		ya = -1.5; yb = 1.5
 		maxIt = 256
 
-		
-		canvas = tk.Canvas(self.ventana1, width = self.width, height = self.height, bg = "#000000")
-		canvas.grid(column=0,row=1)
-		img = PhotoImage(width = self.width, height = self.height)
-		canvas.create_image((0, 0), image = img, state = "normal", anchor = tk.NW)
+		img = PhotoImage(width = self.width+self.margin, height = self.height+self.margin)
 
 		for ky in range(self.height): #si haces hilos de Ky, cada hilo hace kx, lo que lo optimiza bastante
 			for kx in range(self.width):
@@ -292,7 +284,7 @@ class Aplicacion(tk.Tk):
 			gr = hex(i % 8 * 32)[2:].zfill(2)
 			bl = hex(i % 16 * 16)[2:].zfill(2)
 			img.put("#" + rd + gr + bl, (kx, ky))
-		canvas.pack()
-		#self.images.append(img)
+		self.canvas1.create_image(positionx, positiony, image = img)
+		self.images.append(img)
 
 aplicacion1=Aplicacion()

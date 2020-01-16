@@ -10,8 +10,8 @@ xa = -2.0; xb = 1.0
 ya = -1.5; yb = 1.5
 maxIt = 256
 
-creal = -0.65
-cimaginary = 0.42
+creal = 0.86
+cimaginary = -0.223
 
 window = Tk()
 canvas = Canvas(window, width = WIDTH, height = HEIGHT, bg = "#000000")
