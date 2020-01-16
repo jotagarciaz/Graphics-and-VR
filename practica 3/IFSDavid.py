@@ -22,72 +22,104 @@ import random
 #       [-0.5, -0.5, 0.5, -0.5, 1.0, 0.0, 0.5]]
 # Sierpinski
 #self.mat = [[0.5, 0, 0, 0.5, 1, 1, 0.33], [0.5, 0, 0, 0.5, -1, 1, 0.33], [0.5, 0, 0, 0.5, 0, -1, 0.33]]
-class IFS:
-    def __init__(self):
-        self.mat = []
+#self.mat = 
 
-    def inserta_ifs(self,a,b,c,d,e,f,p):
-        self.mat.append([a,b,c,d,e,f,p])
-    
-    def genera_ifs(self):
-        # image size
-        imgx = 1280
-        imgy = 720 # will be auto-re-adjusted
-        
-        m = len(self.mat)
-        # find the xmin, xmax, ymin, ymax
-        x = self.mat[0][4]
-        y = self.mat[0][5]
-        #
-        xa = x
-        xb = x
-        ya = y
-        yb = y
-        #
-        for k in range(imgx * imgy):
-            p=random.random()
-            psum = 0.0
-            for i in range(m):
-                psum += self.mat[i][6]
-                if p <= psum:
-                    break
-            x0 = x * self.mat[i][0] + y * self.mat[i][1] + self.mat[i][4]
-            y  = x * self.mat[i][2] + y * self.mat[i][3] + self.mat[i][5]
-            x = x0
-            #
-            if x < xa:
-                xa = x
-            if x > xb:
-                xb = x
-            if y < ya:
-                ya = y
-            if y > yb:
-                yb = y
-        
-        # drawing
-        imgy = round(imgy * (yb - ya) / (xb - xa)) # auto-re-adjust the aspect ratio
-        image = Image.new("L", (imgx,imgy))
-        
-        x=0.0
-        y=0.0
-        for k in range(imgx * imgy):
-            p=random.random()
-            psum = 0.0
-            for i in range(m):
-                psum += self.mat[i][6]
-                if p <= psum:
-                    break
-            x0 = x * self.mat[i][0] + y * self.mat[i][1] + self.mat[i][4]
-            y  = x * self.mat[i][2] + y * self.mat[i][3] + self.mat[i][5]
-            x = x0
-            jx = int((x - xa) / (xb - xa) * (imgx - 1))
-            jy = (imgy - 1) - int((y - ya) / (yb - ya) * (imgy - 1))
-            image.putpixel((jx, jy), 255)
-        
-        image.save("IFS.png")
-        image.show()
+class IFS:
+	def __init__(self):
+		self.mat = [[0,0.08,-0.24,0,-5.5,6.1,0.03225806452],
+[0.1,0,0,0.1,-6,-0.8,0.03225806452],
+[0.1,0,0,0.1,-6,8,0.03225806452],
+[0.1,0,0,0.1,-2,8,0.03225806452],
+[0,0.08,-0.24,0,-2.6,6.1,0.03225806452],
+[0.1,0,0,0.1,-2,-0.8,0.03225806452],
+[0, 0.06, -0.1, 0, -0.1, 2.6, 0.03225806452],
+[0.06, 0, 0, 0.06, -1, 3.5, 0.03225806452],
+[0,0.08,-0.28,0,1.4,7,0.03225806452],
+[0.1,0,0,0.1,2,-0.8,0.03225806452],
+[0.1,0,0,0.1,6,-0.8,0.03225806452],
+[0.1,0,0,0.1,6,8,0.03225806452],
+[0.06, 0, 0, 0.06, 6.5, 3.6, 0.03225806452],
+[0,0.08,-0.24,0,5.4,6.1,0.03225806452],
+[0.1, 0, 0, 0.1, 10, -0.8, 0.03225806452],
+[0.1, 0, 0, 0.1, 10, 3.5, 0.03225806452],
+[0.1, 0, 0, 0.1, 10, 8, 0.03225806452],
+[0,0.06,-0.1,0,9.4,7,0.03225806452],
+[0, 0.06, -0.1, 0, 11.9, 2.6, 0.03225806452],
+[0,0.08,-0.24,0,14.5,6.1,0.03225806452],
+[0.1, 0, 0, 0.1, 14, -0.8, 0.03225806452],
+[0.1, 0, 0, 0.1, 14, 8, 0.03225806452],
+[0,0.08,-0.28,0,17.4,6,0.03225806452],
+[0.1, 0, 0, 0.1, 18, 8, 0.03225806452],
+[0,0.08,-0.28,0,19.8,6,0.03225806452],
+[0.05, 0, 0, 0.06, 18.5, 3.6, 0.03225806452],
+[0.1, 0, 0, 0.1, 22, 8, 0.03225806452],
+[0.1, 0, 0, 0.1, 22, -0.8, 0.03225806452],
+[0.1, 0, 0, 0.1, 22, 3.5, 0.03225806452],
+[0, 0.06,-0.1, 0, 21.4, 7, 0.03225806452],
+[0, 0.06,-0.1,0,23.9,2.6, 0.03225806452]]
+
+	def inserta_ifs(self,a,b,c,d,e,f,p):
+		self.mat.append([a,b,c,d,e,f,p])
+	
+	def genera_ifs(self):
+		# image size
+		imgx = 1280
+		imgy = 720 # will be auto-re-adjusted
+		
+		m = len(self.mat)
+		# find the xmin, xmax, ymin, ymax
+		x = self.mat[0][4]
+		y = self.mat[0][5]
+		#
+		xa = x
+		xb = x
+		ya = y
+		yb = y
+		#
+		for k in range(imgx * imgy):
+			p=random.random()
+			psum = 0.0
+			for i in range(m):
+				psum += self.mat[i][6]
+				if p <= psum:
+					break
+			x0 = x * self.mat[i][0] + y * self.mat[i][1] + self.mat[i][4]
+			y  = x * self.mat[i][2] + y * self.mat[i][3] + self.mat[i][5]
+			x = x0
+			#
+			if x < xa:
+				xa = x
+			if x > xb:
+				xb = x
+			if y < ya:
+				ya = y
+			if y > yb:
+				yb = y
+		
+		# drawing
+		imgy = round(imgy * (yb - ya) / (xb - xa)) # auto-re-adjust the aspect ratio
+		image = Image.new("L", (imgx,imgy))
+		
+		x=0.0
+		y=0.0
+		for k in range(imgx * imgy):
+			p=random.random()
+			psum = 0.0
+			for i in range(m):
+				psum += self.mat[i][6]
+				if p <= psum:
+					break
+			x0 = x * self.mat[i][0] + y * self.mat[i][1] + self.mat[i][4]
+			y  = x * self.mat[i][2] + y * self.mat[i][3] + self.mat[i][5]
+			x = x0
+			jx = int((x - xa) / (xb - xa) * (imgx - 1))
+			jy = (imgy - 1) - int((y - ya) / (yb - ya) * (imgy - 1))
+			image.putpixel((jx, jy), 255)
+		
+		image.save("IFS.png")
+		image.show()
 
 if __name__ == "__main__":
-    ifs = IFS()
-    ifs.inserta_ifs()
-    ifs.genera_ifs()
+	ifs = IFS()
+	#ifs.inserta_ifs()
+	ifs.genera_ifs()
