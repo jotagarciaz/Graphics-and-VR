@@ -4,7 +4,6 @@ from tkinter import PhotoImage
 import numpy as np
 import copy
 import math
-#from PIL import Image, ImageTk
 import random
 
 class Aplicacion(tk.Tk):
@@ -80,6 +79,16 @@ class Aplicacion(tk.Tk):
 		self.label4.grid(column=4, row=0, padx=5, pady=5)
 		self.mandelbrot = ttk.Radiobutton(self.lf1, text="Mandelbrot", variable=self.dato, value=6, command=self.passing_parameters)
 		self.mandelbrot.grid(column=4, row=1, padx=5, pady=5)
+		self.julia = ttk.Radiobutton(self.lf1, text="Julia", variable=self.dato, value=7, command=self.passing_parameters)
+		self.julia.grid(column=4, row=2, padx=5, pady=5)
+		self.CReal = ttk.Label(self.lf1, text="C real")
+		self.creal=tk.DoubleVar()
+		self.creal=ttk.Entry(self.lf1, textvariable=self.creal, width=4, justify=tk.CENTER)
+		self.creal.insert(tk.INSERT, "-0.65")
+		self.CImaginary = ttk.Label(self.lf1, text="C imaginary")
+		self.cimaginary=tk.DoubleVar()
+		self.cimaginary=ttk.Entry(self.lf1, textvariable=self.cimaginary, width=4, justify=tk.CENTER)
+		self.cimaginary.insert(tk.INSERT, "0.42")
 		self.boton1=ttk.Button(self.lf1, text="Transform", command=self.draw)
 		self.boton1.grid(column=0, row=6, columnspan=2, padx=5, pady=5, sticky="we")
 
@@ -102,6 +111,12 @@ class Aplicacion(tk.Tk):
 			self.P.grid(column=4, row=4, padx=5, pady=5)
 			self.label4.grid(column=7, row=0, padx=5, pady=5)
 			self.mandelbrot.grid(column=7, row=1, padx=5, pady=5)
+			self.julia.grid(column=7, row=2, padx=5, pady=5)
+		elif self.dato.get() == 7:
+			self.CReal.grid(column=4, row=3, padx=5, pady=5)
+			self.creal.grid(column=5, row=3, padx=5, pady=5)
+			self.CImaginary.grid(column=4, row=4, padx=5, pady=5)
+			self.cimaginary.grid(column=5, row=4, padx=5, pady=5)
 		else:
 			self.labelParameters.grid_remove()
 			self.labelA.grid_remove()
@@ -120,6 +135,11 @@ class Aplicacion(tk.Tk):
 			self.P.grid_remove()
 			self.label4.grid(column=4, row=0, padx=5, pady=5)
 			self.mandelbrot.grid(column=4, row=1, padx=5, pady=5)
+			self.julia.grid(column=4, row=2, padx=5, pady=5)
+			self.CReal.grid_remove()
+			self.creal.grid_remove()
+			self.CImaginary.grid_remove()
+			self.cimaginary.grid_remove()
 
 	def draw(self):
 		self.canvas1.delete("all")
@@ -161,6 +181,10 @@ class Aplicacion(tk.Tk):
 			positionx = self.margin + self.width/2
 			positiony = self.margin + self.height/2
 			self.mandelbrot_set(positionx, positiony)
+		elif self.dato.get() == 7:
+			positionx = self.margin + self.width/2
+			positiony = self.margin + self.height/2
+			self.julia_set(positionx, positiony)
 
 	def sierp_triangle(self, level, x1, y1, x2, y2, x3, y3):
 		if level <= 1:
@@ -263,7 +287,7 @@ class Aplicacion(tk.Tk):
 			jx = int((x - xa) / (xb - xa) * (imgx - 1)) 
 			jy = (imgy - 1) - int((y - ya) / (yb - ya) * (imgy - 1))
 			image.put('black', (jx, jy))
-			self.canvas1.update()
+		self.canvas1.update()
 		self.images.append(image)
 
 	def mandelbrot_set(self, positionx, positiony):
@@ -277,6 +301,29 @@ class Aplicacion(tk.Tk):
 			for kx in range(self.width):
 				c = complex(xa + (xb - xa) * kx / self.width, ya + (yb - ya) * ky / self.height)
 				z = complex(0.0, 0.0)
+				for i in range(maxIt):
+					z = z * z + c
+					if abs(z) >= 2.0:
+						break
+				rd = hex(i % 4 * 64)[2:].zfill(2)
+				gr = hex(i % 8 * 32)[2:].zfill(2)
+				bl = hex(i % 16 * 16)[2:].zfill(2)
+				img.put("#" + rd + gr + bl, (kx, ky))
+		self.canvas1.update()
+		self.images.append(img)
+
+	def julia_set(self, positionx, positiony):
+		maxIt = 256
+
+		real = np.linspace(-1.5, 1.5, self.width)
+		imaginary = np.linspace(-1.0, 1.0, self.height)
+
+		img = PhotoImage(width = self.width+self.margin, height = self.height+self.margin)
+		self.canvas1.create_image(positionx, positiony, image = img)
+		for ky in range(self.height): #si haces hilos de Ky, cada hilo hace kx, lo que lo optimiza bastante
+			for kx in range(self.width):
+				c = complex(float(self.creal.get()), float(self.cimaginary.get()))
+				z = complex(real[kx], imaginary[ky])
 				for i in range(maxIt):
 					z = z * z + c
 					if abs(z) >= 2.0:
