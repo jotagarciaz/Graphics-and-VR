@@ -274,6 +274,7 @@ class Aplicacion(tk.Tk):
 		self.canvas1.create_image(positionx, positiony, image=image)
 		x=0.0
 		y=0.0 
+		image.put('white', to=(0, 0, imgx, imgy))
 		for k in range(imgx * imgy):
 			p=random.random() 
 			psum = 0.0
