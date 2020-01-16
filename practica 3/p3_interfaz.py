@@ -16,6 +16,64 @@ class Aplicacion(tk.Tk):
 							[0.85,0.04,-0.04,0.85,0.0,1.6,0.85],
 							[0.2,-0.26,0.23,0.22,0.0,1.6,0.07],
 							[-0.15,0.28,0.26,0.24,0.0,0.44,0.07]]
+		self.clara=[[+0.00, 0.10, -0.28, 0.00, 0.00, +6.2, 0.03225806452], #CV
+					[+0.15, 0.00, +0.00, 0.10, 0.00, +0.0, 0.03225806452], #CD
+					[+0.15, 0.00, +0.00, 0.10, 0.00, +6.2, 0.03225806452], #CU
+					[+0.00, 0.10, -0.32, 0.00, 4.00, +7.0, 0.03225806452], #LV
+					[+0.15, 0.00, +0.00, 0.10, 4.00, +0.0, 0.03225806452], #LH
+                    [-0.08, 0.10, -0.36, 0.00, 9.00, +7.0, 0.03225806452], #AVI
+                    [+0.08, 0.10, -0.36, 0.00, 9.50, +7.0, 0.03225806452], #AVD
+                    [+0.10, 0.00, +0.00, 0.10, 8.75, +3.6, 0.03225806452], #AC
+					[+0.12, 0.00, -0.16, 0.10, 12.4, +3.6, 0.03225806452], #RD
+					[+0.15, 0.00, +0.00, 0.10, 12.0, +6.2, 0.03225806452], #RU
+					[+0.12, 0.00, +0.00, 0.10, 12.4, +3.6, 0.03225806452], #RC
+					[+0.00, 0.10, -0.36, 0.00, 12.0, +7.0, 0.03225806452], #RV
+					[+0.00, 0.06, -0.10, 0.00, 14.5, +6.2, 0.03225806452], #RVU
+                    [-0.08, 0.10, -0.36, 0.00, 16.5, +7.0, 0.03225806452], #AVI
+                    [+0.08, 0.10, -0.36, 0.00, 17.0, +7.0, 0.03225806452], #AVD
+                    [+0.10, 0.00, +0.00, 0.10, 16.3, +3.6, 0.03225806452]] #AC
+		self.jgarciaz = [[0,0.08,-0.24,0,-4.5,6.1,0.03225806452], #J Vertical
+						[0.1,0,0,0.1,-6,8,0.03225806452], #J Arriba
+						[0.08,0,0,0.1,-6,-0.8,0.03225806452], # J Abajo
+
+						[0.1,0,0,0.1,-2,8,0.03225806452], #G Arriba
+						[0,0.08,-0.24,0,-2.6,6.1,0.03225806452], #G Vertical Izquierda
+						[0.1,0,0,0.1,-2,-0.8,0.03225806452],	#G Abajo
+						[0, 0.06, -0.1, 0, -0.1, 2.6, 0.03225806452], #G Vertical Derecha
+						[0.06, 0, 0, 0.06, -1, 3.5, 0.03225806452],# G Vertical Centro
+
+
+						[0,0.08,-0.28,0,1.4,6,0.03225806452], # A VI
+						[0.1, 0, 0, 0.1, 2, 8, 0.03225806452], # A Arriba
+						[0,0.08,-0.28,0,3.8,6,0.03225806452], # A VD
+						[0.05, 0, 0, 0.06, 2.5, 3.6, 0.03225806452], # A Centro
+
+						[0,0.08,-0.28,0,5.4,6.0,0.03225806452],#R vertical grande
+						[0.1,0,0,0.1,6,8,0.03225806452],#R arriba
+						[0,0.08,-0.16,0,8,7.0,0.03225806452],#R vertical peque
+						[0.06, 0, 0, 0.06, 6.5, 3.6, 0.03225806452],#R centro
+						[0.065,0.05,-0.12,0.065,6.8,2,0.03225806452],#R con angulo
+
+						[0.1, 0, 0, 0.1, 10, -0.8, 0.03225806452],#C abajo
+						[0.1, 0, 0, 0.1, 10, 8, 0.03225806452],#C arriba
+						[0,0.08,-0.24,0,9.4,6.1,0.03225806452],#C vertical arriba
+
+
+						[0,0.08,-0.24,0,14.5,6.1,0.03225806452],#I
+						[0.1, 0, 0, 0.1, 14, -0.8, 0.03225806452],#I
+						[0.1, 0, 0, 0.1, 14, 8, 0.03225806452],#I
+
+
+						[0,0.08,-0.28,0,17.4,6,0.03225806452], # A VI
+						[0.1, 0, 0, 0.1, 18, 8, 0.03225806452], # A Arriba
+						[0,0.08,-0.28,0,19.8,6,0.03225806452], # A VD
+						[0.05, 0, 0, 0.06, 18.5, 3.6, 0.03225806452], # A Centro
+
+
+						[0.1, 0, 0, 0.1,22, -0.8, 0.03225806452],#Z abajo
+						[0.1, 0, 0, 0.1, 22, 8, 0.03225806452],#Z arriba
+
+						[-0.065,0.05,-0.2,-0.06,23.5,6.1,0.03225806452]] #Z VERTICAL
 		self.images = [] #type: list
 		self.ventana1.geometry('1000x800')
 		self.entradadatos()
@@ -53,6 +111,8 @@ class Aplicacion(tk.Tk):
 		self.fern.grid(column=2, row=1, padx=5, pady=5)
 		self.choose_ifs = ttk.Radiobutton(self.lf1, text="Choose your IFS", variable=self.dato, value=5, command=self.passing_parameters)
 		self.choose_ifs.grid(column=2, row=2, padx=5, pady=5)
+		self.clara_ifs = ttk.Radiobutton(self.lf1, text="JGARCIAZ", variable=self.dato, value=8, command=self.passing_parameters)
+		self.clara_ifs.grid(column=2, row=3, padx=5, pady=5)
 		self.labelParameters = ttk.Label(self.lf1, text="Parameters:")
 		self.labelA = ttk.Label(self.lf1, text="A")
 		self.A=tk.DoubleVar()
@@ -185,6 +245,10 @@ class Aplicacion(tk.Tk):
 			positionx = self.margin + self.width/2
 			positiony = self.margin + self.height/2
 			self.julia_set(positionx, positiony)
+		elif self.dato.get() == 8:
+			positionx = self.margin + self.width/2
+			positiony = self.margin + self.height/2
+			self.ifs(self.jgarciaz, positionx, positiony)
 
 	def sierp_triangle(self, level, x1, y1, x2, y2, x3, y3):
 		if level <= 1:
@@ -244,14 +308,19 @@ class Aplicacion(tk.Tk):
 			self.koch_curve(level, x3, y3, x4, y4)
 
 	def ifs(self, matrix, positionx, positiony):
-		imgx = self.margin + self.width
-		imgy = self.margin + self.height
+		if self.dato.get() == 8:
+			imgx = 640
+			imgy = 520
+		else:
+			imgx = self.margin + self.width
+			imgy = self.margin + self.height
 		x = matrix[0][4]
 		y = matrix[0][5] 
 		xa = x
 		xb = x
 		ya = y
 		yb = y
+		
 		for k in range(imgx * imgy):
 			p = random.random()
 			psum = 0.0
@@ -270,6 +339,8 @@ class Aplicacion(tk.Tk):
 				ya = y
 			if y > yb:
 				yb = y
+		if self.dato.get() == 8:
+			imgy = round(imgy * (yb - ya) / (xb - xa))
 		image = PhotoImage(width = imgx, height = imgy)
 		self.canvas1.create_image(positionx, positiony, image=image)
 		x=0.0
