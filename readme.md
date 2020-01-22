@@ -1,4 +1,4 @@
-# Practicas desarrolladas en Python3.6
+# Prácticas desarrolladas en Python3.6
 
 
 ## Instalación de Python3.6:
