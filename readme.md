@@ -1,11 +1,11 @@
-# Practicas desarrolladas en Python3.6
+# Prácticas desarrolladas en Python3.6
 
 
 ## Instalación de Python3.6:
 
 Para instalar la versión 3.6 de Python necesitaremos descargarnos el instalador desde la propia página:
 
-    [Web oficial de Python](https://www.python.org/downloads/release/python-360/)
+   [Web oficial de Python](https://www.python.org/downloads/release/python-360/)
 
 ## Asegurando el funcionamiento:
     
