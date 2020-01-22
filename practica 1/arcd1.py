@@ -1,7 +1,7 @@
 """
 @author: Joaquín García Benítez
 @brief: First assignment for Computer Graphics of the University of Cantabria. We should present a GUI that allows us to draw lines
-with different lines algorithms:
+with  different lines algorithms:
     - Slope of the line.
     - D.D.A.
     - Bresenham

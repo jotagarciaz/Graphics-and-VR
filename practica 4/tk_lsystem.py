@@ -4,11 +4,18 @@ from tkinter import ttk
 import copy
 import math
 
+
+#X->F-[[X]+X]+F[+FX]-X 
+#F->FF 
+#w=X 
+#n=5 
+#alpha=90 
+#angle=22.5
 class Aplicacion(tk.Tk):
 	def __init__(self):
 		self.ventana1=tk.Tk()
 		self.height = 512
-		self.width = 640
+		self.width = 1000
 		self.margin = 20
 		self.ventana1.geometry('1000x800')
 		self.entradadatos()
@@ -23,10 +30,10 @@ class Aplicacion(tk.Tk):
 		return y_coordinate
 
 	def entradadatos(self):
-		self.lf1=ttk.LabelFrame(self.ventana1, text="Choose your data.")
+		self.lf1=ttk.LabelFrame(self.ventana1, text="Choose your data.", width=1000)
 		self.lf1.grid(column=0, row=0)
 		
-		self.label1=ttk.Label(self.lf1, text="Rule: (0 when done):")
+		self.label1=ttk.Label(self.lf1, text="Rule: ")
 		self.label1.grid(column=0,row=0, padx=5, pady=5)
 		self.rule=tk.StringVar()
 		self.rule=ttk.Entry(self.lf1, textvariable=self.rule, width=3, justify=tk.CENTER)

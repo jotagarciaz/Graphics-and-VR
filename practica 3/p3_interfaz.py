@@ -10,70 +10,55 @@ class Aplicacion(tk.Tk):
 	def __init__(self):
 		self.ventana1=tk.Tk()
 		self.height = 480
-		self.width = 640
+		self.width = 1000
 		self.margin = 20
 		self.fern_matrix = [[0.0,0.0,0.0,0.16,0.0,0.0,0.01],
 							[0.85,0.04,-0.04,0.85,0.0,1.6,0.85],
 							[0.2,-0.26,0.23,0.22,0.0,1.6,0.07],
 							[-0.15,0.28,0.26,0.24,0.0,0.44,0.07]]
-		self.clara=[[+0.00, 0.10, -0.28, 0.00, 0.00, +6.2, 0.03225806452], #CV
-					[+0.15, 0.00, +0.00, 0.10, 0.00, +0.0, 0.03225806452], #CD
-					[+0.15, 0.00, +0.00, 0.10, 0.00, +6.2, 0.03225806452], #CU
-					[+0.00, 0.10, -0.32, 0.00, 4.00, +7.0, 0.03225806452], #LV
-					[+0.15, 0.00, +0.00, 0.10, 4.00, +0.0, 0.03225806452], #LH
-                    [-0.08, 0.10, -0.36, 0.00, 9.00, +7.0, 0.03225806452], #AVI
-                    [+0.08, 0.10, -0.36, 0.00, 9.50, +7.0, 0.03225806452], #AVD
-                    [+0.10, 0.00, +0.00, 0.10, 8.75, +3.6, 0.03225806452], #AC
-					[+0.12, 0.00, -0.16, 0.10, 12.4, +3.6, 0.03225806452], #RD
-					[+0.15, 0.00, +0.00, 0.10, 12.0, +6.2, 0.03225806452], #RU
-					[+0.12, 0.00, +0.00, 0.10, 12.4, +3.6, 0.03225806452], #RC
-					[+0.00, 0.10, -0.36, 0.00, 12.0, +7.0, 0.03225806452], #RV
-					[+0.00, 0.06, -0.10, 0.00, 14.5, +6.2, 0.03225806452], #RVU
-                    [-0.08, 0.10, -0.36, 0.00, 16.5, +7.0, 0.03225806452], #AVI
-                    [+0.08, 0.10, -0.36, 0.00, 17.0, +7.0, 0.03225806452], #AVD
-                    [+0.10, 0.00, +0.00, 0.10, 16.3, +3.6, 0.03225806452]] #AC
-		self.jgarciaz = [[0,0.08,-0.24,0,-4.5,6.1,0.03225806452], #J Vertical
-						[0.1,0,0,0.1,-6,8,0.03225806452], #J Arriba
-						[0.08,0,0,0.1,-6,-0.8,0.03225806452], # J Abajo
 
-						[0.1,0,0,0.1,-2,8,0.03225806452], #G Arriba
-						[0,0.08,-0.24,0,-2.6,6.1,0.03225806452], #G Vertical Izquierda
-						[0.1,0,0,0.1,-2,-0.8,0.03225806452],	#G Abajo
-						[0, 0.06, -0.1, 0, -0.1, 2.6, 0.03225806452], #G Vertical Derecha
-						[0.06, 0, 0, 0.06, -1, 3.5, 0.03225806452],# G Vertical Centro
+		self.jgarciaz = [
+						[0.1,0,0,0.1,-6,8,0.03225806452], #J top
+						[0,0.08,-0.24,0,-4.5,6.1,0.03225806452], #J v
+						[0.08,0,0,0.1,-6,-0.8,0.03225806452], # J bot
 
+						[0.1,0,0,0.1,-2,8,0.03225806452], #G top
+						[0,0.08,-0.24,0,-2.6,6.1,0.03225806452], #G v l
+						[0.1,0,0,0.1,-2,-0.8,0.03225806452],	#G bot
+						[0, 0.06, -0.1, 0, -0.1, 2.6, 0.03225806452], #G v r
+						[0.06, 0, 0, 0.06, -1, 3.5, 0.03225806452],# G v mid
 
-						[0,0.08,-0.28,0,1.4,6,0.03225806452], # A VI
-						[0.1, 0, 0, 0.1, 2, 8, 0.03225806452], # A Arriba
-						[0,0.08,-0.28,0,3.8,6,0.03225806452], # A VD
-						[0.05, 0, 0, 0.06, 2.5, 3.6, 0.03225806452], # A Centro
+						[0.1, 0, 0, 0.1, 2, 8, 0.03225806452], # A top
+						[0,0.08,-0.28,0,1.4,6,0.03225806452], # A v l
+						[0,0.08,-0.28,0,3.8,6,0.03225806452], # A vertical right
+						[0.05, 0, 0, 0.06, 2.5, 3.6, 0.03225806452], # A mid
 
-						[0,0.08,-0.28,0,5.4,6.0,0.03225806452],#R vertical grande
-						[0.1,0,0,0.1,6,8,0.03225806452],#R arriba
-						[0,0.08,-0.16,0,8,7.0,0.03225806452],#R vertical peque
-						[0.06, 0, 0, 0.06, 6.5, 3.6, 0.03225806452],#R centro
-						[0.065,0.05,-0.12,0.065,6.8,2,0.03225806452],#R con angulo
+						[0.1,0,0,0.1,6,8,0.03225806452],#R top
+						[0,0.08,-0.28,0,5.4,6.0,0.03225806452],#R v left
+						[0,0.08,-0.16,0,8,7.0,0.03225806452],#R v r
+						[0.06, 0, 0, 0.06, 6.5, 3.6, 0.03225806452],#R mid
+						[0.065,0.05,-0.12,0.065,6.8,2,0.03225806452],#R angle
 
-						[0.1, 0, 0, 0.1, 10, -0.8, 0.03225806452],#C abajo
-						[0.1, 0, 0, 0.1, 10, 8, 0.03225806452],#C arriba
-						[0,0.08,-0.24,0,9.4,6.1,0.03225806452],#C vertical arriba
+						[0.1, 0, 0, 0.1, 10, 8, 0.03225806452],#C top
+						[0,0.08,-0.24,0,9.4,6.1,0.03225806452],#C v 
+						[0.1, 0, 0, 0.1, 10, -0.8, 0.03225806452],#C bot
+						
+
+						[0.1, 0, 0, 0.1, 14, 8, 0.03225806452],#I  top
+						[0,0.08,-0.24,0,14.5,6.1,0.03225806452],#I v
+						[0.1, 0, 0, 0.1, 14, -0.8, 0.03225806452],#I bot 
+						
+
+						[0.1, 0, 0, 0.1, 18, 8, 0.03225806452], # A top
+						[0,0.08,-0.28,0,17.4,6,0.03225806452], # A V left
+						[0.05, 0, 0, 0.06, 18.5, 3.6, 0.03225806452], # A mid
+						[0,0.08,-0.28,0,19.8,6,0.03225806452], # A V right
+						
 
 
-						[0,0.08,-0.24,0,14.5,6.1,0.03225806452],#I
-						[0.1, 0, 0, 0.1, 14, -0.8, 0.03225806452],#I
-						[0.1, 0, 0, 0.1, 14, 8, 0.03225806452],#I
-
-
-						[0,0.08,-0.28,0,17.4,6,0.03225806452], # A VI
-						[0.1, 0, 0, 0.1, 18, 8, 0.03225806452], # A Arriba
-						[0,0.08,-0.28,0,19.8,6,0.03225806452], # A VD
-						[0.05, 0, 0, 0.06, 18.5, 3.6, 0.03225806452], # A Centro
-
-
-						[0.1, 0, 0, 0.1,22, -0.8, 0.03225806452],#Z abajo
-						[0.1, 0, 0, 0.1, 22, 8, 0.03225806452],#Z arriba
-
-						[-0.065,0.05,-0.2,-0.06,23.5,6.1,0.03225806452]] #Z VERTICAL
+						[0.1, 0, 0, 0.1, 22, 8, 0.03225806452],#Z top
+						[-0.065,0.05,-0.2,-0.06,23.5,6.1,0.03225806452], #Z angle
+						[0.1, 0, 0, 0.1,22, -0.8, 0.03225806452]]#Z bot
 		self.images = [] #type: list
 		self.ventana1.geometry('1000x800')
 		self.entradadatos()
@@ -82,7 +67,7 @@ class Aplicacion(tk.Tk):
 		self.points = [] #type: list
 		self.draw()
 		self.ventana1.mainloop()
-
+		self.matrix = []
 	def origin(self, y_coordinate):
 		y_coordinate = self.canvas1.winfo_height() - y_coordinate
 		return y_coordinate
@@ -117,24 +102,33 @@ class Aplicacion(tk.Tk):
 		self.labelA = ttk.Label(self.lf1, text="A")
 		self.A=tk.DoubleVar()
 		self.A=ttk.Entry(self.lf1, textvariable=self.A, width=3, justify=tk.CENTER)
+		self.A.insert(tk.INSERT, "0.5")
 		self.labelB = ttk.Label(self.lf1, text="B")
 		self.B=tk.DoubleVar()
 		self.B=ttk.Entry(self.lf1, textvariable=self.B, width=3, justify=tk.CENTER)
+		self.B.insert(tk.INSERT, "0.")
 		self.labelC = ttk.Label(self.lf1, text="C")
 		self.C=tk.DoubleVar()
 		self.C=ttk.Entry(self.lf1, textvariable=self.C, width=3, justify=tk.CENTER)
+		self.C.insert(tk.INSERT, "0.")
 		self.labelD = ttk.Label(self.lf1, text="D")
 		self.D=tk.DoubleVar()
 		self.D=ttk.Entry(self.lf1, textvariable=self.D, width=3, justify=tk.CENTER)
+		self.D.insert(tk.INSERT, "0.5")
 		self.labelE = ttk.Label(self.lf1, text="E")
 		self.E=tk.DoubleVar()
 		self.E=ttk.Entry(self.lf1, textvariable=self.E, width=3, justify=tk.CENTER)
+		self.E.insert(tk.INSERT, "1")
 		self.labelF = ttk.Label(self.lf1, text="F")
 		self.F=tk.DoubleVar()
 		self.F=ttk.Entry(self.lf1, textvariable=self.F, width=3, justify=tk.CENTER)
+		self.F.insert(tk.INSERT, "1")
 		self.labelP = ttk.Label(self.lf1, text="P")
 		self.P=tk.DoubleVar()
 		self.P=ttk.Entry(self.lf1, textvariable=self.P, width=3, justify=tk.CENTER)
+		self.P.insert(tk.INSERT, "0.33")
+		self.botonM=ttk.Button(self.lf1, text="Add", command=self.add_row, width=4)
+
 		self.label4=ttk.Label(self.lf1, text="Set fractals:")
 		self.label4.grid(column=4, row=0, padx=5, pady=5)
 		self.mandelbrot = ttk.Radiobutton(self.lf1, text="Mandelbrot", variable=self.dato, value=6, command=self.passing_parameters)
@@ -149,8 +143,11 @@ class Aplicacion(tk.Tk):
 		self.cimaginary=tk.DoubleVar()
 		self.cimaginary=ttk.Entry(self.lf1, textvariable=self.cimaginary, width=4, justify=tk.CENTER)
 		self.cimaginary.insert(tk.INSERT, "0.42")
-		self.boton1=ttk.Button(self.lf1, text="Transform", command=self.draw)
+		self.boton1=ttk.Button(self.lf1, text="Apply", command=self.draw)
 		self.boton1.grid(column=0, row=6, columnspan=2, padx=5, pady=5, sticky="we")
+
+	def add_row(self):
+		self.matrix.append([float(self.A.get()), float(self.B.get()), float(self.C.get()), float(self.D.get()), float(self.E.get()), float(self.F.get()), float(self.P.get())])
 
 	def passing_parameters(self):
 		if self.dato.get() == 5:
@@ -169,6 +166,7 @@ class Aplicacion(tk.Tk):
 			self.F.grid(column=6, row=3, padx=5, pady=5)
 			self.labelP.grid(column=3, row=4, padx=5, pady=5)
 			self.P.grid(column=4, row=4, padx=5, pady=5)
+			self.botonM.grid(column=6, row=4, padx=5, pady=5)
 			self.label4.grid(column=7, row=0, padx=5, pady=5)
 			self.mandelbrot.grid(column=7, row=1, padx=5, pady=5)
 			self.julia.grid(column=7, row=2, padx=5, pady=5)
@@ -232,6 +230,7 @@ class Aplicacion(tk.Tk):
 			positiony = self.margin + self.height/2
 			self.ifs(self.fern_matrix, positionx, positiony)
 		elif self.dato.get() == 5:
+			
 			matrix = [[float(self.A.get()), float(self.B.get()), float(self.C.get()), float(self.D.get()), float(self.E.get()), float(self.F.get()), float(self.P.get())], [0.5, 0, 0, 0.5, -1, 1, 0.33], [0.5, 0, 0, 0.5, 0, -1, 0.33]]
 			level = int(self.level.get())
 			positionx = self.margin + self.width/2
@@ -377,9 +376,9 @@ class Aplicacion(tk.Tk):
 					z = z * z + c
 					if abs(z) >= 2.0:
 						break
-				rd = hex(i % 4 * 64)[2:].zfill(2)
-				gr = hex(i % 8 * 32)[2:].zfill(2)
-				bl = hex(i % 16 * 16)[2:].zfill(2)
+				rd = hex(i % 5 * 20)[2:].zfill(2)
+				gr = hex(i % 6 * 5)[2:].zfill(2)
+				bl = hex(i % 15 * 16)[2:].zfill(2)
 				img.put("#" + rd + gr + bl, (kx, ky))
 		self.canvas1.update()
 		self.images.append(img)
@@ -392,7 +391,7 @@ class Aplicacion(tk.Tk):
 
 		img = PhotoImage(width = self.width+self.margin, height = self.height+self.margin)
 		self.canvas1.create_image(positionx, positiony, image = img)
-		for ky in range(self.height): #si haces hilos de Ky, cada hilo hace kx, lo que lo optimiza bastante
+		for ky in range(self.height): 
 			for kx in range(self.width):
 				c = complex(float(self.creal.get()), float(self.cimaginary.get()))
 				z = complex(real[kx], imaginary[ky])
@@ -400,10 +399,11 @@ class Aplicacion(tk.Tk):
 					z = z * z + c
 					if abs(z) >= 2.0:
 						break
-				rd = hex(i % 4 * 64)[2:].zfill(2)
-				gr = hex(i % 8 * 32)[2:].zfill(2)
-				bl = hex(i % 16 * 16)[2:].zfill(2)
-				img.put("#" + rd + gr + bl, (kx, ky))
+				r = hex(i % 128)[2:].zfill(2)
+				g = hex(i % 160)[2:].zfill(2)
+				b = hex(i % 15 * 16)[2:].zfill(2)
+				img.put("#" + r + g + b, (kx, ky))
+		
 		self.canvas1.update()
 		self.images.append(img)
 
