@@ -1,0 +1,5 @@
+https://gist.github.com/jotagarciaz/601d1390e28108d93bc0f3c35f0b2f6e
+
+Enlace al readme con la explicación de cómo preparar el entorno para las prácticas.
+
+Solamente es necesario hacerlo una vez. 
