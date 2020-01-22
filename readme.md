@@ -3,12 +3,12 @@
 
 ## Instalación de Python3.6:
 
-    Para instalar la versión 3.6 de Python necesitaremos descargarnos el instalador desde la propia página:
+   Para instalar la versión 3.6 de Python necesitaremos descargarnos el instalador desde la propia página:
 
-    [Web oficial de Python](https://www.python.org/downloads/release/python-360/)
+   [Web oficial de Python](https://www.python.org/downloads/release/python-360/)
 
 ## Asegurando el funcionamiento:
-    para asegurarnos de que las aplicaciones hechas con arcade funcionen, debermos hacer un downgrade de pip hasta la versión 9.0.1:
+   para asegurarnos de que las aplicaciones hechas con arcade funcionen, debermos hacer un downgrade de pip hasta la versión 9.0.1:
 
     pip install --force-reinstall pip==9.0.1
 
